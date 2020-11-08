@@ -1,26 +1,26 @@
 package main;
 
-import controller.CalcController;
-import controller.ICalcController;
+import controller.IShapeController;
+import controller.LineController;
 
-import model.CalcModel;
-import model.ICalcModel;
-
-import view.CalcGUIView;
+import model.IShapeModel;
+import model.LineModel;
 import view.FridaView;
+
+import javax.sound.sampled.Line;
 
 /** Main file to run the drawing program "Frida", named after Frida Kahlo :).
  * @author 190026921 */
 public class FridaMain {
     public static void main(String[] args) {
         // create Model
-        // ICalcModel model = new CalcModel();
+        LineModel model = new LineModel();
 
         // Create controller
-        // ICalcController controller = new CalcController(model);
+        IShapeController controller = new LineController(model);
 
         // Create View (GUI)
-        // new FridaView(model, controller);
-        new FridaView();
+        new FridaView(model, controller);
+        // new FridaView();
     }
 }

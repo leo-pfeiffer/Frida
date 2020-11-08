@@ -1,5 +1,8 @@
 package view;
 
+import controller.IShapeController;
+import model.IShapeModel;
+
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -7,6 +10,9 @@ import java.util.Observable;
 import java.util.Observer;
 
 public class FridaView implements Observer, ActionListener {
+
+    private IShapeModel model;
+    private IShapeController controller;
 
     private static int DEFAULT_FRAME_WIDTH = 1200;
     private static int DEFAULT_FRAME_HEIGHT = 800;
@@ -29,9 +35,9 @@ public class FridaView implements Observer, ActionListener {
     private JButton clearButton;
     private ColourPicker colourPicker;
 
-    public FridaView() {
-        // model
-        // controller
+    public FridaView(IShapeModel model, IShapeController controller) {
+        this.model = model;
+        this.controller = controller;
 
         // Create the main frame for the view
         mainFrame = new JFrame("Frida");
@@ -62,21 +68,27 @@ public class FridaView implements Observer, ActionListener {
 
     /** Setup the draw panel */
     public void setupPanel() {
+
+        // add a MouseListener that listens for clicks and releases
         this.drawPanel.addMouseListener(new MouseListener() {
             @Override
-            public void mouseClicked(MouseEvent e) {
-                System.out.println("Mouse clicked " + e.getX() + " " + e.getY());
-                // todo
-            }
+            public void mouseClicked(MouseEvent e) {}
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                System.out.println("Mouse released " + e.getX() + " " + e.getY());
-                // todo
+                // System.out.println("Mouse released " + e.getX() + " " + e.getY());
+
+                // end a line
+                controller.controlSetEndCoordinates(e.getPoint());
             }
 
             @Override
-            public void mousePressed(MouseEvent e) {}
+            public void mousePressed(MouseEvent e) {
+                // System.out.println("Mouse pressed " + e.getX() + " " + e.getY());
+
+                // start a line
+                controller.controlSetStartCoordinates(e.getPoint());
+            }
 
             @Override
             public void mouseEntered(MouseEvent e) {}
@@ -85,17 +97,20 @@ public class FridaView implements Observer, ActionListener {
             public void mouseExited(MouseEvent e) {}
         });
 
-        // to preview object to be drawn
+        // Add a motion listener to listen for mouse drags
         this.drawPanel.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                System.out.println("Mouse dragged " + e.getX() + " " + e.getY());
+                // System.out.println("Mouse dragged " + e.getX() + " " + e.getY());
                 // todo
             }
 
             @Override
             public void mouseMoved(MouseEvent e) {}
         });
+
+        // add the drawPanel to the center of the main frame
+        mainFrame.add(drawPanel, BorderLayout.CENTER);
     }
 
     public void setupMenu() {
@@ -106,7 +121,8 @@ public class FridaView implements Observer, ActionListener {
         JMenuItem help = new JMenuItem ("Help");
         file.add (load);
         file.add (save);
-        menu.add (help);
+        file.add (help);
+        menu.add (file);
 
         load.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -255,9 +271,6 @@ public class FridaView implements Observer, ActionListener {
 
         // add toolbox to the top of the main frame
         mainFrame.add(toolbox, BorderLayout.NORTH);
-
-        // add the drawPanel to the center of the main frame
-        mainFrame.add(drawPanel, BorderLayout.CENTER);
     }
 
     @Override
@@ -273,7 +286,7 @@ public class FridaView implements Observer, ActionListener {
                 new Runnable() {
                     public void run() {
                         // totalField.setText("" + model.getTotal());
-                        // mainFrame.repaint();
+                        mainFrame.repaint();
                     }
                 });
     }

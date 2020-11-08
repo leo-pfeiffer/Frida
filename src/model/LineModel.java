@@ -1,7 +1,6 @@
 package model;
 
 import java.awt.Graphics;
-import java.awt.Color;
 import java.awt.Point;
 
 /** Represents a single line that can be drawn by the user.
@@ -9,32 +8,44 @@ import java.awt.Point;
 public class LineModel extends ShapeModel implements IShapeModel {
 
     /** X coordinate from where to draw the line. */
-    private final int FROM_X;
+    private int startX;
     /** Y coordinate from where to draw the line. */
-    private final int FROM_Y;
+    private int startY;
 
     /** X coordinate to where to draw the line. */
-    private final int TO_X;
+    private int endX;
     /** Y coordinate to where to draw the line. */
-    private final int TO_Y;
+    private int endY;
 
-    /** Custom constructor for a new Line.
-     * @param colour The colour of the line.
-     * @param from the point from where to draw the line.
-     * @param to the point to where to draw the line. */
-    public LineModel(Color colour, Point from, Point to) {
-        super(colour);
-        this.FROM_X = (int) from.getX();
-        this.FROM_Y = (int) from.getY();
-        this.TO_X = (int) to.getX();
-        this.TO_Y = (int) to.getY();
+    /** Custom constructor for a new Line. */
+    public LineModel() { }
+
+    private void update() {
+        this.setChanged();
+        this.notifyObservers();
     }
 
     @Override
     public void draw(Graphics g) {
         // set the colour
         super.draw(g);
-        g.drawLine(this.FROM_X, this.FROM_Y, this.TO_X, this.TO_Y);
+        g.drawLine(this.startX, this.startY, this.endX, this.endY);
 
+    }
+
+    @Override
+    public void setStartCoordinates(Point point) {
+        this.startX = (int) point.getX();
+        this.startY = (int) point.getY();
+        update();
+        System.out.println("Start point set");
+    }
+
+    @Override
+    public void setEndCoordinates(Point point) {
+        this.endX = (int) point.getX();
+        this.endY = (int) point.getY();
+        update();
+        System.out.println("End point set");
     }
 }
