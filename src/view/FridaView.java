@@ -9,8 +9,8 @@ import java.util.Observer;
 
 public class FridaView implements Observer, ActionListener {
 
-    private static int DEFAULT_FRAME_WIDTH = 600;
-    private static int DEFAULT_FRAME_HEIGHT = 400;
+    private static int DEFAULT_FRAME_WIDTH = 1200;
+    private static int DEFAULT_FRAME_HEIGHT = 800;
 
     private JFrame mainFrame;
     private JPanel drawPanel;  // todo add drawPanel or whatever
@@ -29,6 +29,7 @@ public class FridaView implements Observer, ActionListener {
     private JButton ellipseButton;
     private JButton starButton;
     private JButton clearButton;
+    private ColourPicker colourPicker;
 
     public FridaView() {
         // model
@@ -87,22 +88,9 @@ public class FridaView implements Observer, ActionListener {
     }
 
     public void setupToolbox() {
-        /*
-                private JButton RectangleButton;
-                private JButton parallelogramButton;
-                private JButton triangleButton;
-                private JButton hexagonButton;
-                private JButton ellipseButton;
-                private JButton starButton;
-                private JButton clearButton;*/
-        colourButton = new JButton("Colour");  // todo change this to appropriate button
 
-        colourButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
+        // Create the colour picker
+        colourPicker = new ColourPicker("Colour");
 
         undoButton = new JButton("Undo");
 
@@ -214,7 +202,7 @@ public class FridaView implements Observer, ActionListener {
         });
 
         // add buttons to the toolbox
-        toolbox.add(colourButton);
+        toolbox.add(colourPicker);
         toolbox.add(undoButton);
         toolbox.add(redoButton);
         toolbox.add(moveButton);
@@ -227,8 +215,11 @@ public class FridaView implements Observer, ActionListener {
         toolbox.add(starButton);
         toolbox.add(clearButton);
 
-        // add toolbox to the main frame
+        // add toolbox to the top of the main frame
         mainFrame.add(toolbox, BorderLayout.NORTH);
+
+        // add the drawPanel to the center of the main frame
+        mainFrame.add(drawPanel, BorderLayout.CENTER);
     }
 
     @Override
