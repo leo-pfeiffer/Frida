@@ -2,8 +2,7 @@ package view;
 
 import javax.swing.*;
 import java.awt.*;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
+import java.awt.event.*;
 import java.util.Observable;
 import java.util.Observer;
 
@@ -17,7 +16,6 @@ public class FridaView implements Observer, ActionListener {
 
     private JMenuBar menu;
     private JToolBar toolbox;
-    private JButton colourButton;
     private JButton undoButton;  // cmd+shift+z
     private JButton redoButton;  // cmd+z
     private JButton moveButton;
@@ -56,9 +54,48 @@ public class FridaView implements Observer, ActionListener {
     /** Method to setup the different components of the main frame, i.e. toolbox and menu,
      * and add them to the main frame. */
     public void setupComponents() {
+        this.setupPanel();
         this.setupMenu();
         this.setupToolbox();
         // mainFrame.add(outputPane, BorderLayout.CENTER);
+    }
+
+    /** Setup the draw panel */
+    public void setupPanel() {
+        this.drawPanel.addMouseListener(new MouseListener() {
+            @Override
+            public void mouseClicked(MouseEvent e) {
+                System.out.println("Mouse clicked " + e.getX() + " " + e.getY());
+                // todo
+            }
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                System.out.println("Mouse released " + e.getX() + " " + e.getY());
+                // todo
+            }
+
+            @Override
+            public void mousePressed(MouseEvent e) {}
+
+            @Override
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
+        });
+
+        // to preview object to be drawn
+        this.drawPanel.addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                System.out.println("Mouse dragged " + e.getX() + " " + e.getY());
+                // todo
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {}
+        });
     }
 
     public void setupMenu() {
@@ -66,9 +103,10 @@ public class FridaView implements Observer, ActionListener {
         JMenu file = new JMenu ("File");
         JMenuItem load = new JMenuItem ("Load");
         JMenuItem save = new JMenuItem ("Save");
+        JMenuItem help = new JMenuItem ("Help");
         file.add (load);
         file.add (save);
-        menu.add (file);
+        menu.add (help);
 
         load.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e) {
@@ -224,11 +262,19 @@ public class FridaView implements Observer, ActionListener {
 
     @Override
     public void actionPerformed(ActionEvent e) {
-
+        if (e.getSource() == lineButton) {
+            // controller.controlClear();
+        }
     }
 
     @Override
     public void update(Observable o, Object arg) {
-
+        SwingUtilities.invokeLater(
+                new Runnable() {
+                    public void run() {
+                        // totalField.setText("" + model.getTotal());
+                        // mainFrame.repaint();
+                    }
+                });
     }
 }
