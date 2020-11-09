@@ -2,6 +2,8 @@ package controller;
 
 import model.LineModel;
 
+import java.awt.Color;
+
 public class LineController implements IShapeController {
 
     private LineModel model;
@@ -11,12 +13,17 @@ public class LineController implements IShapeController {
     }
 
     @Override
-    public void controlSetStartCoordinates(int x, int y) {
+    public void setStartCoordinates(int x, int y) {
         model.setStartCoordinates(x, y);
     }
 
     @Override
-    public void controlSetEndCoordinates(int x, int y) {
+    public void setEndCoordinates(int x, int y) {
         model.setEndCoordinates(x, y);
+    }
+
+    @Override
+    public void setColour(Color colour) {
+        model.setColour(colour);
     }
 }

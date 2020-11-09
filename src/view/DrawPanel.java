@@ -34,6 +34,4 @@ public class DrawPanel extends JPanel {
         this.endX = endX;
         this.endY = endY;
     }
-
-
 }

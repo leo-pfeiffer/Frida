@@ -1,6 +1,7 @@
 package view;
 
 import controller.IShapeController;
+import controller.LineController;
 import model.IShapeModel;
 import model.LineModel;
 
@@ -9,8 +10,15 @@ import java.awt.*;
 import java.awt.event.*;
 import java.util.Observable;
 import java.util.Observer;
+import java.util.ArrayList;
 
 public class FridaView implements Observer, ActionListener {
+
+    /** Contains all active models. */
+    private ArrayList<IShapeModel> models;
+
+    /** Contains all active controllers. */
+    private ArrayList<IShapeController> controllers;
 
     private LineModel model;
     private IShapeController controller;
@@ -28,6 +36,7 @@ public class FridaView implements Observer, ActionListener {
 
     private JMenuBar menu;
     private JToolBar toolbox;
+
     private JButton undoButton;  // cmd+shift+z
     private JButton redoButton;  // cmd+z
     private JButton moveButton;
@@ -41,9 +50,23 @@ public class FridaView implements Observer, ActionListener {
     private JButton clearButton;
     private ColourPicker colourPicker;
 
-    public FridaView(LineModel model, IShapeController controller) {
-        this.model = model;
-        this.controller = controller;
+    @SuppressWarnings("deprecation")
+    public FridaView() {
+
+        // dynamically create models!!
+        this.model = new LineModel();
+        this.controller = new LineController(this.model);
+
+        // todo do this on every new click to create a new object
+        // then as long as we are working with this object, get the current one
+        // via models.get(models.size() - 1) and the corresponding controller
+        // accordingly.
+        // How to handle the corresponding view though?
+        models.add(this.model);
+        controllers.add(this.controller);
+
+        // Add an observer
+        ((Observable) model).addObserver(this);
 
         // Create the main frame for the view
         mainFrame = new JFrame("Frida");
@@ -60,9 +83,6 @@ public class FridaView implements Observer, ActionListener {
 
         // Setup the components
         this.setupComponents();
-
-        //
-        ((Observable) model).addObserver(this);
 
         mainFrame.paintAll(mainFrame.getGraphics());
         mainFrame.pack();
@@ -86,10 +106,6 @@ public class FridaView implements Observer, ActionListener {
         // Set the preferred size of the draw panel.
         this.drawPanel.setPreferredSize(new Dimension(DRAW_PANEL_WIDTH, DRAW_PANEL_HEIGHT));
 
-        // todo check if this is needed
-        // this.drawPanel.setMinimumSize(new Dimension(DRAW_PANEL_WIDTH, DRAW_PANEL_HEIGHT));
-        // this.drawPanel.setMaximumSize(new Dimension(DRAW_PANEL_WIDTH, DRAW_PANEL_HEIGHT));
-
         // add a MouseListener that listens for clicks and releases
         this.drawPanel.addMouseListener(new MouseListener() {
             @Override
@@ -97,20 +113,18 @@ public class FridaView implements Observer, ActionListener {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-                // System.out.println("Mouse released " + e.getX() + " " + e.getY());
 
                 // end a line
                 Point point = e.getPoint();
-                controller.controlSetEndCoordinates((int) point.getX(), (int) point.getY());
+                controller.setEndCoordinates((int) point.getX(), (int) point.getY());
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-                // System.out.println("Mouse pressed " + e.getX() + " " + e.getY());
 
                 // start a line
                 Point point = e.getPoint();
-                controller.controlSetStartCoordinates((int) point.getX(), (int) point.getY());
+                controller.setStartCoordinates((int) point.getX(), (int) point.getY());
             }
 
             @Override
@@ -124,7 +138,6 @@ public class FridaView implements Observer, ActionListener {
         this.drawPanel.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                // System.out.println("Mouse dragged " + e.getX() + " " + e.getY());
                 // todo
             }
 
@@ -133,7 +146,7 @@ public class FridaView implements Observer, ActionListener {
         });
 
         // add the drawPanel to the center of the main frame
-        mainFrame.add(drawPanel, BorderLayout.CENTER);
+        mainFrame.add(drawPanel, BorderLayout.SOUTH);
     }
 
     public void setupMenu() {
@@ -299,6 +312,7 @@ public class FridaView implements Observer, ActionListener {
     @Override
     public void actionPerformed(ActionEvent e) {
         if (e.getSource() == lineButton) {
+            // delete the last element of models and controllers?
             // controller.controlClear();
         }
     }

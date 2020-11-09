@@ -13,14 +13,7 @@ import javax.sound.sampled.Line;
  * @author 190026921 */
 public class FridaMain {
     public static void main(String[] args) {
-        // create Model
-        LineModel model = new LineModel();
-
-        // Create controller
-        IShapeController controller = new LineController(model);
-
         // Create View (GUI)
-        new FridaView(model, controller);
-        // new FridaView();
+        new FridaView();
     }
 }
