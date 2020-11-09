@@ -2,6 +2,7 @@ package view;
 
 import controller.IShapeController;
 import model.IShapeModel;
+import model.LineModel;
 
 import javax.swing.*;
 import java.awt.*;
@@ -11,14 +12,19 @@ import java.util.Observer;
 
 public class FridaView implements Observer, ActionListener {
 
-    private IShapeModel model;
+    private LineModel model;
     private IShapeController controller;
 
-    private static int DEFAULT_FRAME_WIDTH = 1200;
-    private static int DEFAULT_FRAME_HEIGHT = 800;
+    private static final int DEFAULT_FRAME_WIDTH = 1200;
+    private static final int DEFAULT_FRAME_HEIGHT = 800;
+
+    private static final int DRAW_PANEL_WIDTH = 1200;
+    private static final int DRAW_PANEL_HEIGHT = 600;
+
+    private static final Color DRAW_BACKGROUND_COLOUR = Color.WHITE;
 
     private JFrame mainFrame;
-    private JPanel drawPanel;  // todo add drawPanel or whatever
+    private DrawPanel drawPanel;  // todo add drawPanel or whatever
 
     private JMenuBar menu;
     private JToolBar toolbox;
@@ -35,7 +41,7 @@ public class FridaView implements Observer, ActionListener {
     private JButton clearButton;
     private ColourPicker colourPicker;
 
-    public FridaView(IShapeModel model, IShapeController controller) {
+    public FridaView(LineModel model, IShapeController controller) {
         this.model = model;
         this.controller = controller;
 
@@ -46,8 +52,7 @@ public class FridaView implements Observer, ActionListener {
         mainFrame.setVisible(true);
 
         // Create the control and draw panels
-        // controlPanel = new JPanel();
-        drawPanel = new JPanel();
+        drawPanel = new DrawPanel();
 
         // Create the menu and toolbox
         menu = new JMenuBar();
@@ -55,6 +60,12 @@ public class FridaView implements Observer, ActionListener {
 
         // Setup the components
         this.setupComponents();
+
+        //
+        ((Observable) model).addObserver(this);
+
+        mainFrame.paintAll(mainFrame.getGraphics());
+        mainFrame.pack();
     }
 
     /** Method to setup the different components of the main frame, i.e. toolbox and menu,
@@ -69,6 +80,16 @@ public class FridaView implements Observer, ActionListener {
     /** Setup the draw panel */
     public void setupPanel() {
 
+        this.drawPanel.setBackground(DRAW_BACKGROUND_COLOUR);
+        // this.drawPanel.setOpaque(true);
+
+        // Set the preferred size of the draw panel.
+        this.drawPanel.setPreferredSize(new Dimension(DRAW_PANEL_WIDTH, DRAW_PANEL_HEIGHT));
+
+        // todo check if this is needed
+        // this.drawPanel.setMinimumSize(new Dimension(DRAW_PANEL_WIDTH, DRAW_PANEL_HEIGHT));
+        // this.drawPanel.setMaximumSize(new Dimension(DRAW_PANEL_WIDTH, DRAW_PANEL_HEIGHT));
+
         // add a MouseListener that listens for clicks and releases
         this.drawPanel.addMouseListener(new MouseListener() {
             @Override
@@ -79,7 +100,8 @@ public class FridaView implements Observer, ActionListener {
                 // System.out.println("Mouse released " + e.getX() + " " + e.getY());
 
                 // end a line
-                controller.controlSetEndCoordinates(e.getPoint());
+                Point point = e.getPoint();
+                controller.controlSetEndCoordinates((int) point.getX(), (int) point.getY());
             }
 
             @Override
@@ -87,7 +109,8 @@ public class FridaView implements Observer, ActionListener {
                 // System.out.println("Mouse pressed " + e.getX() + " " + e.getY());
 
                 // start a line
-                controller.controlSetStartCoordinates(e.getPoint());
+                Point point = e.getPoint();
+                controller.controlSetStartCoordinates((int) point.getX(), (int) point.getY());
             }
 
             @Override
@@ -285,7 +308,13 @@ public class FridaView implements Observer, ActionListener {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     public void run() {
-                        // totalField.setText("" + model.getTotal());
+                        int[] start = model.getStartCoordinates();
+                        int[] end = model.getEndCoordinates();
+
+                        System.out.println("Start " + start[0] + " End: " + end[0]);
+
+                        drawPanel.setArguments(start[0], start[1], end[0], end[1]);
+
                         mainFrame.repaint();
                     }
                 });
