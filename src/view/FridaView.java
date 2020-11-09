@@ -21,9 +21,6 @@ public class FridaView implements Observer, ActionListener {
     /** Contains all active controllers. */
     private ArrayList<IShapeController> controllers = new ArrayList<IShapeController>();
 
-    private LineModel model;
-    private IShapeController controller;
-
     /** The currently active model. */
     private IShapeModel activeModel;
 
@@ -61,20 +58,12 @@ public class FridaView implements Observer, ActionListener {
     @SuppressWarnings("deprecation")
     public FridaView() {
 
-        // dynamically create models!!
-        this.model = new LineModel();
-        this.controller = new LineController(this.model);
+        // Initially, we use the line model
+        activeModel = new LineModel();
 
-        // todo do this on every new click to create a new object
-        // then as long as we are working with this object, get the current one
-        // via models.get(models.size() - 1) and the corresponding controller
-        // accordingly.
-        // How to handle the corresponding view though?
-        models.add(this.model);
-        controllers.add(this.controller);
-
-        // Add an observer
-        ((Observable) model).addObserver(this);
+        ((Observable) activeModel).addObserver(this);
+        models.add(activeModel);
+        controllers.add(new LineController((LineModel) activeModel));
 
         // Create the main frame for the view
         mainFrame = new JFrame("Frida");
@@ -124,7 +113,7 @@ public class FridaView implements Observer, ActionListener {
 
                 // end a line
                 Point point = e.getPoint();
-                controller.setEndCoordinates((int) point.getX(), (int) point.getY());
+                getCurrentController().setEndCoordinates((int) point.getX(), (int) point.getY());
             }
 
             @Override
@@ -132,7 +121,7 @@ public class FridaView implements Observer, ActionListener {
 
                 // start a line
                 Point point = e.getPoint();
-                controller.setStartCoordinates((int) point.getX(), (int) point.getY());
+                getCurrentController().setStartCoordinates((int) point.getX(), (int) point.getY());
             }
 
             @Override
@@ -236,6 +225,9 @@ public class FridaView implements Observer, ActionListener {
 
         // add toolbox to the top of the main frame
         mainFrame.add(toolbox, BorderLayout.NORTH);
+
+        // Initially, make lineButton active as the default model is also the LineModel
+        activateButton(lineButton);
     }
 
     /** Add the appropriate ActionListener to the button and set the behaviour
@@ -249,11 +241,28 @@ public class FridaView implements Observer, ActionListener {
                 activateButton(button);
 
                 if (button.getText().equals("Line")) {
+                    // Create new model instance
                     activeModel = new LineModel();
+
+                    // Add observer to new instance
+                    ((Observable) activeModel).addObserver(getOuterThis());
+
+                    // add instance to existing models
+                    models.add(activeModel);
+
+                    // add controller
+                    controllers.add(new LineController((LineModel) activeModel));
+
                     System.out.println("activeModel is LineModel");
                 }
             }
         });
+    }
+
+    /** Get the class itself in order to use it in anonymous inner classes.
+     * @return the reference to the current instance. */
+    public FridaView getOuterThis() {
+        return this;
     }
 
     @Override
@@ -269,28 +278,47 @@ public class FridaView implements Observer, ActionListener {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     public void run() {
-                        int[] start = model.getStartCoordinates();
-                        int[] end = model.getEndCoordinates();
+                        int[] start = getCurrentModel().getStartCoordinates();
+                        int[] end = getCurrentModel().getEndCoordinates();
 
                         System.out.println("Start " + start[0] + " End: " + end[0]);
 
-                        drawPanel.setArguments(start[0], start[1], end[0], end[1]);
+                        if (activeModel instanceof LineModel) {
+                            drawPanel.setArguments(start[0], start[1], end[0], end[1]);
+                        }
 
                         mainFrame.repaint();
                     }
                 });
     }
 
+    /** Marks one button in the toolbox as active (bold & black) and all others
+     * as inactive (plain & dark gray).
+     * @param button The button to be activated. */
     public void activateButton(JButton button){
         for (JButton b : allButtons) {
             if (b.equals(button)) {
                 Font bold = b.getFont().deriveFont(Font.BOLD);
                 b.setFont(bold);
+                b.setForeground(Color.BLACK);
             }
             else {
                 Font plain = b.getFont().deriveFont(Font.PLAIN);
                 b.setFont(plain);
+                b.setForeground(Color.DARK_GRAY);
             }
         }
+    }
+
+    /** Get the last (i.e. current) element in the controllers list.
+     * @return Current controller. */
+    public IShapeController getCurrentController() {
+        return controllers.get(controllers.size() - 1);
+    }
+
+    /** Get the last (i.e. current) element in models list.
+     * @return Current model. */
+    public IShapeModel getCurrentModel() {
+        return models.get(models.size() - 1);
     }
 }
