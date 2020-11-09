@@ -5,6 +5,7 @@ import controller.LineController;
 import model.IShapeModel;
 import model.LineModel;
 
+import javax.sound.sampled.Line;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -15,13 +16,16 @@ import java.util.ArrayList;
 public class FridaView implements Observer, ActionListener {
 
     /** Contains all active models. */
-    private ArrayList<IShapeModel> models;
+    private ArrayList<IShapeModel> models = new ArrayList<IShapeModel>();
 
     /** Contains all active controllers. */
-    private ArrayList<IShapeController> controllers;
+    private ArrayList<IShapeController> controllers = new ArrayList<IShapeController>();
 
     private LineModel model;
     private IShapeController controller;
+
+    /** The currently active model. */
+    private IShapeModel activeModel;
 
     private static final int DEFAULT_FRAME_WIDTH = 1200;
     private static final int DEFAULT_FRAME_HEIGHT = 800;
@@ -31,6 +35,7 @@ public class FridaView implements Observer, ActionListener {
 
     private static final Color DRAW_BACKGROUND_COLOUR = Color.WHITE;
 
+    // View elements
     private JFrame mainFrame;
     private DrawPanel drawPanel;  // todo add drawPanel or whatever
 
@@ -49,6 +54,9 @@ public class FridaView implements Observer, ActionListener {
     private JButton starButton;
     private JButton clearButton;
     private ColourPicker colourPicker;
+
+    /** A list containing all buttons. */
+    private ArrayList<JButton> allButtons = new ArrayList<JButton>();
 
     @SuppressWarnings("deprecation")
     public FridaView() {
@@ -177,136 +185,75 @@ public class FridaView implements Observer, ActionListener {
         mainFrame.setJMenuBar(menu);
     }
 
+    /** Set up all components of the toolbox, add the ActionListeners and
+     * add them to the toolbox. */
     public void setupToolbox() {
 
-        // Create the colour picker
+        // Create the components
         colourPicker = new ColourPicker("Colour");
+        allButtons.add(colourPicker);
 
         undoButton = new JButton("Undo");
-
-        undoButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
-
-        undoButton = new JButton("Undo");
-
-        undoButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
+        allButtons.add(undoButton);
 
         redoButton = new JButton("Redo");
-
-        redoButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
+        allButtons.add(redoButton);
 
         moveButton = new JButton("Move");
-
-        moveButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
+        allButtons.add(moveButton);
 
         lineButton = new JButton("Line");
+        allButtons.add(lineButton);
 
-        lineButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
-
-        // Setup rectangle button
         rectangleButton = new JButton("Rectangle");
-
-        rectangleButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
+        allButtons.add(rectangleButton);
 
         parallelogramButton = new JButton("Parallelogram");
-
-        parallelogramButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
+        allButtons.add(parallelogramButton);
 
         triangleButton = new JButton("Triangle");
-
-        triangleButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
+        allButtons.add(triangleButton);
 
         hexagonButton = new JButton("Hexagon");
-
-        hexagonButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
+        allButtons.add(hexagonButton);
 
         ellipseButton = new JButton("Ellipse");
-
-        ellipseButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
+        allButtons.add(ellipseButton);
 
         starButton = new JButton("Star");
-
-        starButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
+        allButtons.add(starButton);
 
         clearButton = new JButton("Clear");
+        allButtons.add(clearButton);
 
-        clearButton.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
-                // should  call method in model class if you want it to affect model
-                JOptionPane.showMessageDialog(mainFrame, "Button not linked to model!");
-            }
-        });
+        for (JButton b : allButtons) {
+            // add ActionListeners
+            addActionListenerToButton(b);
 
-        // add buttons to the toolbox
-        toolbox.add(colourPicker);
-        toolbox.add(undoButton);
-        toolbox.add(redoButton);
-        toolbox.add(moveButton);
-        toolbox.add(lineButton);
-        toolbox.add(rectangleButton);
-        toolbox.add(parallelogramButton);
-        toolbox.add(triangleButton);
-        toolbox.add(hexagonButton);
-        toolbox.add(ellipseButton);
-        toolbox.add(starButton);
-        toolbox.add(clearButton);
+            // Add buttons to toolbox
+            toolbox.add(b);
+        }
 
         // add toolbox to the top of the main frame
         mainFrame.add(toolbox, BorderLayout.NORTH);
+    }
+
+    /** Add the appropriate ActionListener to the button and set the behaviour
+     * for actionPerformed.
+     * @param button The button the ActionListener is added to. */
+    public void addActionListenerToButton(JButton button) {
+        button.addActionListener(new ActionListener(){
+            public void actionPerformed(ActionEvent e){
+
+                // Activate the button and deactivate others
+                activateButton(button);
+
+                if (button.getText().equals("Line")) {
+                    activeModel = new LineModel();
+                    System.out.println("activeModel is LineModel");
+                }
+            }
+        });
     }
 
     @Override
@@ -332,5 +279,18 @@ public class FridaView implements Observer, ActionListener {
                         mainFrame.repaint();
                     }
                 });
+    }
+
+    public void activateButton(JButton button){
+        for (JButton b : allButtons) {
+            if (b.equals(button)) {
+                Font bold = b.getFont().deriveFont(Font.BOLD);
+                b.setFont(bold);
+            }
+            else {
+                Font plain = b.getFont().deriveFont(Font.PLAIN);
+                b.setFont(plain);
+            }
+        }
     }
 }
