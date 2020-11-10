@@ -5,7 +5,6 @@ import controller.LineController;
 import model.IShapeModel;
 import model.LineModel;
 
-import javax.sound.sampled.Line;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
@@ -17,53 +16,69 @@ public class FridaView implements Observer, ActionListener {
 
     /** Contains all active models. */
     private ArrayList<IShapeModel> models = new ArrayList<IShapeModel>();
-
     /** Contains all active controllers. */
     private ArrayList<IShapeController> controllers = new ArrayList<IShapeController>();
-
     /** The currently active model. */
     private IShapeModel activeModel;
 
+    /** Default width of the main frame. */
     private static final int DEFAULT_FRAME_WIDTH = 1200;
+    /** Default height of the main frame. */
     private static final int DEFAULT_FRAME_HEIGHT = 800;
-
+    /** Default width of the draw panel. */
     private static final int DRAW_PANEL_WIDTH = 1200;
+    /** Default height of the draw panel. */
     private static final int DRAW_PANEL_HEIGHT = 600;
-
+    /** Default background of the draw panel. */
     private static final Color DRAW_BACKGROUND_COLOUR = Color.WHITE;
 
     // View elements
+    /** The main JFrame holding all other components. */
     private JFrame mainFrame;
-    private DrawPanel drawPanel;  // todo add drawPanel or whatever
+    /** This is the panel we will be drawing on. */
+    private DrawPanel drawPanel;
 
+    /** Main menu for saving, loading etc. */
     private JMenuBar menu;
+    /** Toolbox to switch shapes etc. */
     private JToolBar toolbox;
 
-    private JButton undoButton;  // cmd+shift+z
-    private JButton redoButton;  // cmd+z
+    /** Button to undo last action. */
+    private JButton undoButton;
+    /** Button to redo last action. */
+    private JButton redoButton;
+    /** Button to activate moving a shape. */
     private JButton moveButton;
+    /** Button to activate line mode. */
     private JButton lineButton;
+    /** Button to activate rectangle mode. */
     private JButton rectangleButton;
+    /** Button to parallelogram line mode. */
     private JButton parallelogramButton;
+    /** Button to activate triangle mode. */
     private JButton triangleButton;
+    /** Button to activate hexagon mode. */
     private JButton hexagonButton;
+    /** Button to activate ellipse mode. */
     private JButton ellipseButton;
+    /** Button to activate star mode. */
     private JButton starButton;
+    /** Button to activate clear mode. */
     private JButton clearButton;
+    /** Button to pick a new colour. */
     private ColourPicker colourPicker;
 
     /** A list containing all buttons. */
     private ArrayList<JButton> allButtons = new ArrayList<JButton>();
 
-    @SuppressWarnings("deprecation")
+    /** Construct a new object by setting up the components. */
     public FridaView() {
 
         // Initially, we use the line model
         activeModel = new LineModel();
 
-        ((Observable) activeModel).addObserver(this);
-        models.add(activeModel);
-        controllers.add(new LineController((LineModel) activeModel));
+        // add observer, add model to models, add controller to controllers
+        setupNewModel(new LineController((LineModel) activeModel));
 
         // Create the main frame for the view
         mainFrame = new JFrame("Frida");
@@ -244,14 +259,7 @@ public class FridaView implements Observer, ActionListener {
                     // Create new model instance
                     activeModel = new LineModel();
 
-                    // Add observer to new instance
-                    ((Observable) activeModel).addObserver(getOuterThis());
-
-                    // add instance to existing models
-                    models.add(activeModel);
-
-                    // add controller
-                    controllers.add(new LineController((LineModel) activeModel));
+                    setupNewModel(new LineController((LineModel) activeModel));
 
                     System.out.println("activeModel is LineModel");
                 }
@@ -263,6 +271,20 @@ public class FridaView implements Observer, ActionListener {
      * @return the reference to the current instance. */
     public FridaView getOuterThis() {
         return this;
+    }
+
+    /** Method to bundle the functions required to set up a new model that
+     * is added when the user creates a new shape on the drawing panel.
+     * @param controller The controller that will be added with the new model. */
+    public void setupNewModel(IShapeController controller) {
+        // Add observer to new instance
+        ((Observable) activeModel).addObserver(getOuterThis());
+
+        // add instance to existing models
+        models.add(activeModel);
+
+        // add controller
+        controllers.add(controller);
     }
 
     @Override
@@ -297,11 +319,13 @@ public class FridaView implements Observer, ActionListener {
      * @param button The button to be activated. */
     public void activateButton(JButton button){
         for (JButton b : allButtons) {
+            // Set button layout to active for the specified button
             if (b.equals(button)) {
                 Font bold = b.getFont().deriveFont(Font.BOLD);
                 b.setFont(bold);
                 b.setForeground(Color.BLACK);
             }
+            // Set button layout to inactive for all other buttons
             else {
                 Font plain = b.getFont().deriveFont(Font.PLAIN);
                 b.setFont(plain);
