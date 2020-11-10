@@ -13,6 +13,7 @@ public class ColourPicker extends JButton {
 
     /** Default colour of the colour picker. */
     // todo s.t. default is whatever is the current colour
+    // private Color colour = Color.BLACK;
     private Color colour = Color.BLACK;
 
     /** Custom constructor.

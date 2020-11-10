@@ -49,6 +49,8 @@ public class FridaView implements Observer, ActionListener {
     private JButton redoButton;
     /** Button to activate moving a shape. */
     private JButton moveButton;
+    /** Button to activate free drawing mode. */
+    private JButton drawingButton;
     /** Button to activate line mode. */
     private JButton lineButton;
     /** Button to activate rectangle mode. */
@@ -211,6 +213,9 @@ public class FridaView implements Observer, ActionListener {
         moveButton = new JButton("Move");
         allButtons.add(moveButton);
 
+        drawingButton = new JButton("Draw");
+        allButtons.add(drawingButton);
+
         lineButton = new JButton("Line");
         allButtons.add(lineButton);
 
@@ -274,6 +279,11 @@ public class FridaView implements Observer, ActionListener {
                         state = "move";
                         System.out.println("Move...");
                     }
+
+                    case "Draw" -> {
+                        System.out.println("Draw...");
+                    }
+
                     case "Line" -> {
                         activeModel = new LineModel();
                         setupNewModel(new LineController((LineModel) activeModel));
@@ -289,6 +299,7 @@ public class FridaView implements Observer, ActionListener {
                         state = "clear";
                         System.out.println("Clear...");
                     }
+                    case "Colour" -> System.out.println("Colour...");
                     default -> System.out.println("Unexpected button: " + b.getText());
                 }
             }
@@ -339,16 +350,20 @@ public class FridaView implements Observer, ActionListener {
 
                                 System.out.println("Start " + start[0] + " End: " + end[0]);
 
+                                Color colour = colourPicker.getColour();
+
                                 if (activeModel instanceof LineModel) {
-                                    drawPanel.setArguments(start[0], start[1], end[0], end[1]);
+                                    drawPanel.setArguments(start[0], start[1], end[0], end[1], colour);
                                 }
 
                                 break;
 
                             case "undo":
+                                drawPanel.undo();
                                 break;
 
                             case "redo":
+                                drawPanel.redo();
                                 break;
 
                             case "move":
