@@ -27,7 +27,7 @@ public class LineModel extends ShapeModel implements IShapeModel {
     public void setStartCoordinates(int x, int y) {
         this.startX = x;
         this.startY = y;
-        update();
+        // update();
         System.out.println("Start point set");
     }
 

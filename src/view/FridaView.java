@@ -71,6 +71,10 @@ public class FridaView implements Observer, ActionListener {
     /** A list containing all buttons. */
     private ArrayList<JButton> allButtons = new ArrayList<JButton>();
 
+    /** The current state of the programme, i.e. draw, undo, redo, move, ... */
+    // todo find a smarter way to solve this
+    private String state;
+
     /** Construct a new object by setting up the components. */
     public FridaView() {
 
@@ -96,6 +100,7 @@ public class FridaView implements Observer, ActionListener {
         // Setup the components
         this.setupComponents();
 
+        // Paint and pack the main frame and its components
         mainFrame.paintAll(mainFrame.getGraphics());
         mainFrame.pack();
     }
@@ -247,21 +252,44 @@ public class FridaView implements Observer, ActionListener {
 
     /** Add the appropriate ActionListener to the button and set the behaviour
      * for actionPerformed.
-     * @param button The button the ActionListener is added to. */
-    public void addActionListenerToButton(JButton button) {
-        button.addActionListener(new ActionListener(){
+     * @param b The button the ActionListener is added to. */
+    public void addActionListenerToButton(JButton b) {
+        b.addActionListener(new ActionListener(){
             public void actionPerformed(ActionEvent e){
 
                 // Activate the button and deactivate others
-                activateButton(button);
+                activateButton(b);
 
-                if (button.getText().equals("Line")) {
-                    // Create new model instance
-                    activeModel = new LineModel();
-
-                    setupNewModel(new LineController((LineModel) activeModel));
-
-                    System.out.println("activeModel is LineModel");
+                // Define the appropriate action upon actionPerformed for each button
+                switch (b.getText()) {
+                    case "Undo" -> {
+                        state = "undo";
+                        System.out.println("Undo...");
+                    }
+                    case "Redo" -> {
+                        state = "redo";
+                        System.out.println("Redo...");
+                    }
+                    case "Move" -> {
+                        state = "move";
+                        System.out.println("Move...");
+                    }
+                    case "Line" -> {
+                        activeModel = new LineModel();
+                        setupNewModel(new LineController((LineModel) activeModel));
+                        System.out.println("activeModel is LineModel");
+                    }
+                    case "Rectangle" -> System.out.println("Rectangle...");
+                    case "Parallelogram" -> System.out.println("Parallelogram...");
+                    case "Triangle" -> System.out.println("Triangle...");
+                    case "Hexagon" -> System.out.println("Hexagon...");
+                    case "Ellipse" -> System.out.println("Ellipse...");
+                    case "Star" -> System.out.println("Star...");
+                    case "Clear" -> {
+                        state = "clear";
+                        System.out.println("Clear...");
+                    }
+                    default -> System.out.println("Unexpected button: " + b.getText());
                 }
             }
         });
@@ -285,6 +313,9 @@ public class FridaView implements Observer, ActionListener {
 
         // add controller
         controllers.add(controller);
+
+        // Set state to draw
+        state = "draw";
     }
 
     @Override
@@ -300,13 +331,35 @@ public class FridaView implements Observer, ActionListener {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     public void run() {
-                        int[] start = getCurrentModel().getStartCoordinates();
-                        int[] end = getCurrentModel().getEndCoordinates();
 
-                        System.out.println("Start " + start[0] + " End: " + end[0]);
+                        switch (state) {
+                            case "draw":
+                                int[] start = getCurrentModel().getStartCoordinates();
+                                int[] end = getCurrentModel().getEndCoordinates();
 
-                        if (activeModel instanceof LineModel) {
-                            drawPanel.setArguments(start[0], start[1], end[0], end[1]);
+                                System.out.println("Start " + start[0] + " End: " + end[0]);
+
+                                if (activeModel instanceof LineModel) {
+                                    drawPanel.setArguments(start[0], start[1], end[0], end[1]);
+                                }
+
+                                break;
+
+                            case "undo":
+                                break;
+
+                            case "redo":
+                                break;
+
+                            case "move":
+                                break;
+
+                            case "clear":
+                                drawPanel.clearAll();
+                                break;
+
+                            default:
+                                System.err.println("Unexpected case: " + state);
                         }
 
                         mainFrame.repaint();
