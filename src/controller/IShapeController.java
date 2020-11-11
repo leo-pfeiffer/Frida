@@ -6,5 +6,5 @@ public interface IShapeController {
 
     void setStartCoordinates(int x, int y);
     void setEndCoordinates(int x, int y);
-    void setColour(Color colour);
+    void setLineColour(Color lineColour);
 }

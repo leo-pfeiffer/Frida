@@ -1,8 +1,6 @@
 package view;
 
 import java.awt.Color;
-import java.awt.event.ActionEvent;
-import java.awt.event.ActionListener;
 import javax.swing.JButton;
 import javax.swing.JColorChooser;
 
@@ -12,8 +10,6 @@ import javax.swing.JColorChooser;
 public class ColourPicker extends JButton {
 
     /** Default colour of the colour picker. */
-    // todo s.t. default is whatever is the current colour
-    // private Color colour = Color.BLACK;
     private Color colour = Color.BLACK;
 
     /** Custom constructor.
@@ -25,12 +21,9 @@ public class ColourPicker extends JButton {
         this.setText(text);
 
         // On mouse click, open a JColorChooser Dialog
-        addActionListener(new ActionListener() {
-            @Override
-            public void actionPerformed(ActionEvent e) {
-                Color pickedColour = JColorChooser.showDialog(null, "Pick a colour!", colour);
-                setColour(pickedColour);
-            }
+        addActionListener(e -> {
+            Color pickedColour = JColorChooser.showDialog(null, "Pick a colour!", colour);
+            setColour(pickedColour);
         });
     }
 

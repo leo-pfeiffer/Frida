@@ -7,8 +7,8 @@ import java.util.Observable;
  * @author 190026921 */
 public abstract class ShapeModel extends Observable implements IShapeModel {
 
-    /** Colour of the shape. */
-    private Color colour;
+    /** Line colour of the shape. */
+    private Color lineColour;
 
     /** X coordinate from where to draw the line. */
     private int startX;
@@ -53,12 +53,12 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
     }
 
     /** {@inheritDoc} */
-    public void setColour(Color colour) {
-        this.colour = colour;
+    public void setLineColour(Color lineColour) {
+        this.lineColour = lineColour;
     }
 
     /** {@inheritDoc} */
-    public Color getColour() {
-        return this.colour;
+    public Color getLineColour() {
+        return this.lineColour;
     }
 }

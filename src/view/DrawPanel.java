@@ -1,7 +1,6 @@
 package view;
 
 import model.IShapeModel;
-import static util.Lists.getLast;
 
 import java.util.ArrayList;
 
@@ -9,11 +8,8 @@ import java.awt.Graphics;
 import java.awt.Graphics2D;
 import java.awt.Shape;
 import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 import java.awt.Color;
 import javax.swing.JPanel;
-
-import java.util.Random;
 
 public class DrawPanel extends JPanel {
 
@@ -34,14 +30,14 @@ public class DrawPanel extends JPanel {
 
 
     public DrawPanel() {
-        shapes = new ArrayList<Shape>();
-        undoneShapes = new ArrayList<Shape>();
+        shapes = new ArrayList<>();
+        undoneShapes = new ArrayList<>();
 
-        colours = new ArrayList<Color>();
-        undoneColours = new ArrayList<Color>();
+        colours = new ArrayList<>();
+        undoneColours = new ArrayList<>();
 
-        models = new ArrayList<IShapeModel>();
-        undoneModels = new ArrayList<IShapeModel>();
+        models = new ArrayList<>();
+        undoneModels = new ArrayList<>();
     }
 
     public void paintComponent(Graphics g) {
@@ -65,7 +61,7 @@ public class DrawPanel extends JPanel {
         int x2 = model.getEndCoordinates()[0];
         int y2 = model.getEndCoordinates()[1];
         addLine(x1, y1, x2, y2);
-        addColour(model.getColour());
+        addColour(model.getLineColour());
     }
 
     /** Add a new line to the panel.
@@ -111,7 +107,11 @@ public class DrawPanel extends JPanel {
 
     /** Clear all array lists that contain graphics. */
     public void clearAll() {
+        // todo Add them to the undone models
         shapes.clear();
+        colours.clear();
+        models.clear();
+
     }
 
     /** Remove last Shape. */

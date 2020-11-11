@@ -10,13 +10,13 @@ public interface IShapeModel {
     /** Method to call setChanged and notifyObserver. */
     void update();
 
-    /** set the colour of the object.
-     * @param colour The new colour. */
-    void setColour(Color colour);
+    /** set the line colour of the object.
+     * @param lineColour The new line colour. */
+    void setLineColour(Color lineColour);
 
-    /** get the colour of the object.
-     * @return colour The new colour. */
-    Color getColour();
+    /** get the line colour of the object.
+     * @return The line colour. */
+    Color getLineColour();
 
     /** Set the start coordinates of the shape.
      * @param x The x coordinate of the start point.

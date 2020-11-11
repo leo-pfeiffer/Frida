@@ -23,7 +23,7 @@ public class LineController implements IShapeController {
     }
 
     @Override
-    public void setColour(Color colour) {
-        model.setColour(colour);
+    public void setLineColour(Color lineColour) {
+        model.setLineColour(lineColour);
     }
 }

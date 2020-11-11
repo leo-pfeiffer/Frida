@@ -357,7 +357,7 @@ public class FridaView implements Observer, ActionListener {
                             case "draw":
 
                                 // Set the model colour to the current state of the colour picker
-                                activeModel.setColour(colourPicker.getColour());
+                                activeModel.setLineColour(colourPicker.getColour());
                                 drawPanel.addModel(activeModel);
                                 break;
 
