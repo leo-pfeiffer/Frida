@@ -15,9 +15,9 @@ import java.util.ArrayList;
 public class FridaView implements Observer, ActionListener {
 
     /** Contains all active models. */
-    private ArrayList<IShapeModel> models = new ArrayList<IShapeModel>();
+    private ArrayList<IShapeModel> models = new ArrayList<>();
     /** Contains all active controllers. */
-    private ArrayList<IShapeController> controllers = new ArrayList<IShapeController>();
+    private ArrayList<IShapeController> controllers = new ArrayList<>();
     /** The currently active model. */
     private IShapeModel activeModel;
 
@@ -37,12 +37,12 @@ public class FridaView implements Observer, ActionListener {
     private JFrame mainFrame;
     /** This is the panel we will be drawing on. */
     private DrawPanel drawPanel;
-
     /** Main menu for saving, loading etc. */
     private JMenuBar menu;
     /** Toolbox to switch shapes etc. */
     private JToolBar toolbox;
 
+    // Buttons
     /** Button to undo last action. */
     private JButton undoButton;
     /** Button to redo last action. */
@@ -71,7 +71,7 @@ public class FridaView implements Observer, ActionListener {
     private ColourPicker colourPicker;
 
     /** A list containing all buttons. */
-    private ArrayList<JButton> allButtons = new ArrayList<JButton>();
+    private ArrayList<JButton> allButtons = new ArrayList<>();
 
     /** The current state of the programme, i.e. draw, undo, redo, move, ... */
     // todo find a smarter way to solve this
@@ -179,18 +179,14 @@ public class FridaView implements Observer, ActionListener {
         file.add (help);
         menu.add (file);
 
-        load.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                // todo call appropriate method in model
-                JOptionPane.showMessageDialog(mainFrame, "Load not linked to model!");
-            }
+        load.addActionListener(e -> {
+            // todo call appropriate method in model
+            JOptionPane.showMessageDialog(mainFrame, "Load not linked to model!");
         });
 
-        save.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e) {
-                // todo call appropriate method in model
-                JOptionPane.showMessageDialog(mainFrame, "Save not linked to model!");
-            }
+        save.addActionListener(e -> {
+            // todo call appropriate method in model
+            JOptionPane.showMessageDialog(mainFrame, "Save not linked to model!");
         });
 
         mainFrame.setJMenuBar(menu);
@@ -259,49 +255,68 @@ public class FridaView implements Observer, ActionListener {
      * for actionPerformed.
      * @param b The button the ActionListener is added to. */
     public void addActionListenerToButton(JButton b) {
-        b.addActionListener(new ActionListener(){
-            public void actionPerformed(ActionEvent e){
+        b.addActionListener(e -> {
 
-                // Activate the button and deactivate others
-                activateButton(b);
-
-                // Define the appropriate action upon actionPerformed for each button
-                switch (b.getText()) {
-                    case "Undo" -> {
-                        state = "undo";
-                        System.out.println("Undo...");
-                    }
-                    case "Redo" -> {
-                        state = "redo";
-                        System.out.println("Redo...");
-                    }
-                    case "Move" -> {
-                        state = "move";
-                        System.out.println("Move...");
-                    }
-
-                    case "Draw" -> {
-                        System.out.println("Draw...");
-                    }
-
-                    case "Line" -> {
-                        activeModel = new LineModel();
-                        setupNewModel(new LineController((LineModel) activeModel));
-                        System.out.println("activeModel is LineModel");
-                    }
-                    case "Rectangle" -> System.out.println("Rectangle...");
-                    case "Parallelogram" -> System.out.println("Parallelogram...");
-                    case "Triangle" -> System.out.println("Triangle...");
-                    case "Hexagon" -> System.out.println("Hexagon...");
-                    case "Ellipse" -> System.out.println("Ellipse...");
-                    case "Star" -> System.out.println("Star...");
-                    case "Clear" -> {
-                        state = "clear";
-                        System.out.println("Clear...");
-                    }
-                    case "Colour" -> System.out.println("Colour...");
-                    default -> System.out.println("Unexpected button: " + b.getText());
+            // Define the appropriate action upon actionPerformed for each button
+            switch (b.getText()) {
+                case "Undo" -> {
+                    drawPanel.undo();
+                    mainFrame.repaint();
+                    System.out.println("Undo...");
                 }
+                case "Redo" -> {
+                    drawPanel.redo();
+                    mainFrame.repaint();
+                    System.out.println("Redo...");
+                }
+                case "Move" -> {
+                    activateButton(b);
+                    state = "move";
+                    System.out.println("Move...");
+                }
+
+                case "Draw" -> {
+                    activateButton(b);
+                    System.out.println("Draw...");
+                }
+
+                case "Line" -> {
+                    activateButton(b);
+                    activeModel = new LineModel();
+                    setupNewModel(new LineController((LineModel) activeModel));
+                    System.out.println("activeModel is LineModel");
+                }
+                case "Rectangle" -> {
+                    activateButton(b);
+                    System.out.println("Rectangle...");
+                }
+                case "Parallelogram" -> {
+                    activateButton(b);
+                    System.out.println("Parallelogram...");
+                }
+                case "Triangle" -> {
+                    activateButton(b);
+                    System.out.println("Triangle...");
+                }
+                case "Hexagon" -> {
+                    activateButton(b);
+                    System.out.println("Hexagon...");
+                }
+                case "Ellipse" -> {
+                    activateButton(b);
+                    System.out.println("Ellipse...");
+                }
+                case "Star" -> {
+                    activateButton(b);
+                    System.out.println("Star...");
+                }
+                case "Clear" -> {
+                    drawPanel.clearAll();
+                    mainFrame.repaint();
+                    System.out.println("Clear...");
+                }
+                case "Colour" -> System.out.println("Colour...");
+                default -> System.out.println("Unexpected button: " + b.getText());
             }
         });
     }
@@ -316,6 +331,7 @@ public class FridaView implements Observer, ActionListener {
      * is added when the user creates a new shape on the drawing panel.
      * @param controller The controller that will be added with the new model. */
     public void setupNewModel(IShapeController controller) {
+
         // Add observer to new instance
         ((Observable) activeModel).addObserver(getOuterThis());
 
@@ -330,47 +346,22 @@ public class FridaView implements Observer, ActionListener {
     }
 
     @Override
-    public void actionPerformed(ActionEvent e) {
-        if (e.getSource() == lineButton) {
-            // delete the last element of models and controllers?
-            // controller.controlClear();
-        }
-    }
+    public void actionPerformed(ActionEvent e) {}
 
     @Override
     public void update(Observable o, Object arg) {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     public void run() {
-
                         switch (state) {
                             case "draw":
-                                int[] start = getCurrentModel().getStartCoordinates();
-                                int[] end = getCurrentModel().getEndCoordinates();
 
-                                System.out.println("Start " + start[0] + " End: " + end[0]);
-
-                                Color colour = colourPicker.getColour();
-
-                                if (activeModel instanceof LineModel) {
-                                    drawPanel.setArguments(start[0], start[1], end[0], end[1], colour);
-                                }
-
-                                break;
-
-                            case "undo":
-                                drawPanel.undo();
-                                break;
-
-                            case "redo":
-                                drawPanel.redo();
+                                // Set the model colour to the current state of the colour picker
+                                activeModel.setColour(colourPicker.getColour());
+                                drawPanel.addModel(activeModel);
                                 break;
 
                             case "move":
-                                break;
-
-                            case "clear":
-                                drawPanel.clearAll();
                                 break;
 
                             default:
@@ -406,11 +397,5 @@ public class FridaView implements Observer, ActionListener {
      * @return Current controller. */
     public IShapeController getCurrentController() {
         return controllers.get(controllers.size() - 1);
-    }
-
-    /** Get the last (i.e. current) element in models list.
-     * @return Current model. */
-    public IShapeModel getCurrentModel() {
-        return models.get(models.size() - 1);
     }
 }

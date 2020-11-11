@@ -1,5 +1,8 @@
 package view;
 
+import model.IShapeModel;
+import static util.Lists.getLast;
+
 import java.util.ArrayList;
 
 import java.awt.Graphics;
@@ -14,16 +17,6 @@ import java.util.Random;
 
 public class DrawPanel extends JPanel {
 
-    /** X coordinate from where to draw the line. */
-    private int startX;
-    /** Y coordinate from where to draw the line. */
-    private int startY;
-
-    /** X coordinate to where to draw the line. */
-    private int endX;
-    /** Y coordinate to where to draw the line. */
-    private int endY;
-
     /** Contains all shapes that are currently painted. */
     private ArrayList<Shape> shapes;
     /** Contains undone shapes. */
@@ -34,6 +27,11 @@ public class DrawPanel extends JPanel {
     /** Contains colours of undone shapes. */
     private ArrayList<Color> undoneColours;
 
+    /** The models corresponding to the shapes. */
+    private ArrayList<IShapeModel> models;
+    /** Contains undone models. */
+    private ArrayList<IShapeModel> undoneModels;
+
 
     public DrawPanel() {
         shapes = new ArrayList<Shape>();
@@ -41,6 +39,9 @@ public class DrawPanel extends JPanel {
 
         colours = new ArrayList<Color>();
         undoneColours = new ArrayList<Color>();
+
+        models = new ArrayList<IShapeModel>();
+        undoneModels = new ArrayList<IShapeModel>();
     }
 
     public void paintComponent(Graphics g) {
@@ -57,19 +58,24 @@ public class DrawPanel extends JPanel {
         }
     }
 
-    public void setArguments(int startX, int startY, int endX, int endY,
-                             Color colour) {
-        this.startX = startX;
-        this.startY = startY;
-        this.endX = endX;
-        this.endY = endY;
-        addLine();
-        addColour(colour);
+    public void addModel(IShapeModel model) {
+        models.add(model);
+        int x1 = model.getStartCoordinates()[0];
+        int y1 = model.getStartCoordinates()[1];
+        int x2 = model.getEndCoordinates()[0];
+        int y2 = model.getEndCoordinates()[1];
+        addLine(x1, y1, x2, y2);
+        addColour(model.getColour());
     }
 
-    /** Add a new line to the panel. */
-    public void addLine() {
-        Line2D line = new Line2D.Double(startX, startY, endX, endY);
+    /** Add a new line to the panel.
+     * @param x1 X position of start coordinate
+     * @param y1 Y position of start coordinate
+     * @param x2 X position of end coordinate
+     * @param y2 Y position of end coordinate
+     * */
+    public void addLine(int x1, int y1, int x2, int y2) {
+        Line2D line = new Line2D.Double(x1, y1, x2, y2);
         shapes.add(line);
     }
 
@@ -95,6 +101,14 @@ public class DrawPanel extends JPanel {
         }
     }
 
+    public IShapeModel getLastModel(ArrayList<IShapeModel> m) {
+        try {
+            return m.get(m.size() - 1);
+        } catch(IndexOutOfBoundsException ioobe) {
+            return null;
+        }
+    }
+
     /** Clear all array lists that contain graphics. */
     public void clearAll() {
         shapes.clear();
@@ -104,6 +118,7 @@ public class DrawPanel extends JPanel {
     public void undo() {
         Shape s = getLastShape(shapes);
         Color c = getLastColour(colours);
+        IShapeModel m = getLastModel(models);
         if (s == null & c == null) {
             System.err.println("Nothing to undo");
         } else {
@@ -114,13 +129,19 @@ public class DrawPanel extends JPanel {
             // handle colours
             undoneColours.add(c);
             colours.remove(c);
+
+            // handle models
+            undoneModels.add(m);
+            models.remove(m);
+
         }
     }
 
     /** Redo the last removed shape. */
     public void redo() {
         Shape s = getLastShape(undoneShapes);
-        Color c = getLastColour(colours);
+        Color c = getLastColour(undoneColours);
+        IShapeModel m = getLastModel(undoneModels);
         if (s == null & c == null) {
             System.err.println("Nothing to redo");
         } else {
@@ -131,6 +152,10 @@ public class DrawPanel extends JPanel {
             // handle colours
             undoneColours.remove(c);
             colours.add(c);
+
+            // handle models
+            undoneModels.remove(m);
+            models.add(m);
         }
     }
 }
