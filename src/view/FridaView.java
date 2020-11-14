@@ -130,8 +130,8 @@ public class FridaView implements Observer, ActionListener {
     /** Setup the draw panel */
     public void setupPanel() {
 
-        this.drawPanel.setBackground(DRAW_BACKGROUND_COLOUR);
-        // this.drawPanel.setOpaque(true);
+        this.drawPanel.setForeground(DRAW_BACKGROUND_COLOUR);
+        drawPanel.setOpaque(true);
 
         // Set the preferred size of the draw panel.
         this.drawPanel.setPreferredSize(new Dimension(DRAW_PANEL_WIDTH, DRAW_PANEL_HEIGHT));
@@ -213,10 +213,10 @@ public class FridaView implements Observer, ActionListener {
     public void setupToolbox() {
 
         // Create the components
-        lineColourPicker = new ColourPicker("Line Colour");
+        lineColourPicker = new ColourPicker("Line Colour", Color.BLACK);
         allButtons.add(lineColourPicker);
 
-        fillColourPicker = new ColourPicker("Fill Colour");
+        fillColourPicker = new ColourPicker("Fill Colour", drawPanel.getBackground());
         allButtons.add(fillColourPicker);
 
         undoButton = new JButton("Undo");

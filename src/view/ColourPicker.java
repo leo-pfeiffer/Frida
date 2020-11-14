@@ -10,19 +10,23 @@ import javax.swing.JColorChooser;
 public class ColourPicker extends JButton {
 
     /** Default colour of the colour picker. */
-    private Color colour = Color.BLACK;
+    private Color colour;
 
     /** Custom constructor.
-     * @param text The button label. */
+     * @param text The button label.
+     * @param colour The default colour.*/
     // todo Make the current colour visible next to the button. Else just do this regular
-    public ColourPicker(String text) {
+    public ColourPicker(String text, Color colour) {
 
         // set the button text
         this.setText(text);
 
+        // set default colour
+        this.colour = colour;
+
         // On mouse click, open a JColorChooser Dialog
         addActionListener(e -> {
-            Color pickedColour = JColorChooser.showDialog(null, "Pick a colour!", colour);
+            Color pickedColour = JColorChooser.showDialog(null, text, colour);
             setColour(pickedColour);
         });
     }

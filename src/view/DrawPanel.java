@@ -3,15 +3,13 @@ package view;
 import model.IShapeModel;
 import model.LineModel;
 import model.RectangleModel;
+import model.ShapeModel2D;
 
+import java.awt.*;
 import java.util.ArrayList;
 
-import java.awt.Graphics;
-import java.awt.Graphics2D;
-import java.awt.Shape;
 import java.awt.geom.Line2D;
 import java.awt.geom.Rectangle2D;
-import java.awt.Color;
 import javax.swing.JPanel;
 
 public class DrawPanel extends JPanel {
@@ -42,11 +40,17 @@ public class DrawPanel extends JPanel {
             // Get the shape and colour that go together
             Shape shape = shapes.get(i);
             IShapeModel model = models.get(i);
-            Color colour = model.getLineColour();
 
-            // Set colour and draw the shape.
-            g2d.setColor(colour);
+            // todo let the user set the stroke
+            g2d.setStroke(new BasicStroke(2));
+            g2d.setColor(model.getLineColour());
             g2d.draw(shape);
+
+            // If 2D model, add fill colour
+            if (model instanceof ShapeModel2D) {
+                g2d.setPaint(((ShapeModel2D) model).getFillColour());
+                g2d.fill(shape);
+            }
         }
     }
 
