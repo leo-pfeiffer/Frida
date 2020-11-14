@@ -3,11 +3,7 @@ package view;
 import controller.IShapeController;
 import controller.LineController;
 import controller.Shape2DController;
-import model.IShapeModel;
-// import model.ShapeModel;
-import model.LineModel;
-import model.RectangleModel;
-import model.ShapeModel2D;
+import model.*;
 
 import javax.swing.*;
 import java.awt.*;
@@ -303,14 +299,11 @@ public class FridaView implements Observer, ActionListener {
                     activateButton(b);
                     // set active model but don't set up the model yet
                     activeModel = new LineModel();
-                    // setupNewModel(new LineController((LineModel) activeModel));
                     System.out.println("activeModel is LineModel");
                 }
                 case "Rectangle" -> {
                     activateButton(b);
-                    // set active model but don't set up the model yet
                     activeModel = new RectangleModel();
-                    // setupNewModel(new Shape2DController((RectangleModel) activeModel));
                     System.out.println("activeModel is RectangleModel ...");
                 }
                 case "Parallelogram" -> {
@@ -319,7 +312,8 @@ public class FridaView implements Observer, ActionListener {
                 }
                 case "Triangle" -> {
                     activateButton(b);
-                    System.out.println("Triangle...");
+                    activeModel = new TriangleModel();
+                    System.out.println("activeModel is Triangle...");
                 }
                 case "Hexagon" -> {
                     activateButton(b);
@@ -443,6 +437,13 @@ public class FridaView implements Observer, ActionListener {
             activeModel = new RectangleModel();
             setupNewModel(new Shape2DController((RectangleModel) activeModel));
         }
+
+        // New triangle
+        else if (activeModel instanceof TriangleModel) {
+            activeModel = new TriangleModel();
+            setupNewModel(new Shape2DController((TriangleModel) activeModel));
+        }
+
     }
 
     /** Get the last (i.e. current) element in the controllers list.

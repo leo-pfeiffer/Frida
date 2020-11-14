@@ -61,4 +61,5 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
     public Color getLineColour() {
         return this.lineColour;
     }
+
 }

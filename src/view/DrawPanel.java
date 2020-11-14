@@ -2,7 +2,6 @@ package view;
 
 import model.IShapeModel;
 import model.LineModel;
-import model.RectangleModel;
 import model.ShapeModel2D;
 
 import java.awt.*;
@@ -57,8 +56,8 @@ public class DrawPanel extends JPanel {
         models.add(model);
         if (model instanceof LineModel) {
             addLine((LineModel) model);
-        } else if (model instanceof RectangleModel){
-            addRectangle((ShapeModel2D) model);
+        } else if (model instanceof ShapeModel2D){
+            addPolygon((ShapeModel2D) model);
         }
     }
 
@@ -74,16 +73,18 @@ public class DrawPanel extends JPanel {
         shapes.add(line);
     }
 
-    /** Add a new rectangle to the panel.
-     * @param model the model for the rectangle
+    /** Add a new polygon type shape to the panel.
+     * @param model the model for any Polygon
      * */
-    public void addRectangle(ShapeModel2D model) {
-        // Rectangle2D rectangle = new Rectangle2D.Double(x1, y1, x2, y2);
-        int[][] corners = model.getCorners();
-        int[] xpoints = new int[4];
-        int[] ypoints = new int[4];
+    public void addPolygon(ShapeModel2D model) {
 
-        for (int i = 0; i < 4; i++) {
+        int[][] corners = model.getCorners();
+        final int numCorners = corners.length;
+
+        int[] xpoints = new int[numCorners];
+        int[] ypoints = new int[numCorners];
+
+        for (int i = 0; i < numCorners; i++) {
             xpoints[i] = corners[i][0];
             ypoints[i] = corners[i][1];
         }

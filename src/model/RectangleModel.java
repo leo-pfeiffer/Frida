@@ -7,8 +7,8 @@ public class RectangleModel extends ShapeModel2D {
     /** Custom constructor. */
     public RectangleModel() { }
 
-    /** Setter method for the corners of the rectangle. */
-    public void setCorners() {
+    /** Calculate the corners of the rectangle. */
+    public void calcCorners() {
         //  Get the maxima and minima of the coordinates
         int xmin = Math.min(startX, endX);
         int xmax = Math.max(startX, endX);
@@ -19,20 +19,14 @@ public class RectangleModel extends ShapeModel2D {
         int[] xpoints = {xmin, xmax, xmax, xmin};
         int[] ypoints = {ymin, ymin, ymax, ymax};
 
-        // Initialise the corners array
-        this.corners = new int[4][2];
-
-        // Fill the corner coordinates into to the corners array
-        for (int i = 0; i < xpoints.length; i++) {
-            this.corners[i][0] = xpoints[i];
-            this.corners[i][1] = ypoints[i];
-        }
+        // Set the corners
+        setCorners(xpoints, ypoints);
     }
 
     /**  {@inheritDoc} */
     @Override
     public int[][] getCorners() {
-        setCorners();
+        calcCorners();
         return super.getCorners();
     }
 

@@ -35,4 +35,19 @@ public abstract class ShapeModel2D extends ShapeModel {
     public int[][] getCorners() {
         return this.corners;
     }
+
+    /** Set the corners.
+     * @param xpoints the x coordinates of the corners.
+     * @param ypoints the y coordinates of the corners. */
+    public void setCorners(int[] xpoints, int[] ypoints) {
+        
+        this.corners = new int[xpoints.length][2];
+
+        // Fill the corner coordinates into to the corners array
+        for (int i = 0; i < xpoints.length; i++) {
+            this.corners[i][0] = xpoints[i];
+            this.corners[i][1] = ypoints[i];
+        }
+    }
+
 }
