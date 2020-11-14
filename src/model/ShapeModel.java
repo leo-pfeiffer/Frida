@@ -11,14 +11,14 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
     private Color lineColour;
 
     /** X coordinate from where to draw the line. */
-    private int startX;
+    protected int startX;
     /** Y coordinate from where to draw the line. */
-    private int startY;
+    protected int startY;
 
     /** X coordinate to where to draw the line. */
-    private int endX;
+    protected int endX;
     /** Y coordinate to where to draw the line. */
-    private int endY;
+    protected int endY;
 
     /** Custom constructor. */
     public ShapeModel() {}

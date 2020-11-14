@@ -9,7 +9,6 @@ import java.awt.*;
 import java.util.ArrayList;
 
 import java.awt.geom.Line2D;
-import java.awt.geom.Rectangle2D;
 import javax.swing.JPanel;
 
 public class DrawPanel extends JPanel {
@@ -56,50 +55,46 @@ public class DrawPanel extends JPanel {
 
     public void addModel(IShapeModel model) {
         models.add(model);
-        int x1 = model.getStartCoordinates()[0];
-        int y1 = model.getStartCoordinates()[1];
-        int x2 = model.getEndCoordinates()[0];
-        int y2 = model.getEndCoordinates()[1];
         if (model instanceof LineModel) {
-            addLine(x1, y1, x2, y2);
+            addLine((LineModel) model);
         } else if (model instanceof RectangleModel){
-            addRectangle(x1, y1, x2, y2);
+            addRectangle((ShapeModel2D) model);
         }
     }
 
     /** Add a new line to the panel.
-     * @param x1 X position of start coordinate
-     * @param y1 Y position of start coordinate
-     * @param x2 X position of end coordinate
-     * @param y2 Y position of end coordinate
+     * @param model The line model the line is based on.
      * */
-    public void addLine(int x1, int y1, int x2, int y2) {
+    public void addLine(LineModel model) {
+        int x1 = model.getStartCoordinates()[0];
+        int y1 = model.getStartCoordinates()[1];
+        int x2 = model.getEndCoordinates()[0];
+        int y2 = model.getEndCoordinates()[1];
         Line2D line = new Line2D.Double(x1, y1, x2, y2);
         shapes.add(line);
     }
 
     /** Add a new rectangle to the panel.
-     * @param x1 X position of start coordinate
-     * @param y1 Y position of start coordinate
-     * @param x2 X position of end coordinate
-     * @param y2 Y position of end coordinate
+     * @param model the model for the rectangle
      * */
-    public void addRectangle(int x1, int y1, int x2, int y2) {
-        Rectangle2D rectangle = new Rectangle2D.Double(x1, y1, x2, y2);
+    public void addRectangle(ShapeModel2D model) {
+        // Rectangle2D rectangle = new Rectangle2D.Double(x1, y1, x2, y2);
+        int[][] corners = model.getCorners();
+        int[] xpoints = new int[4];
+        int[] ypoints = new int[4];
+
+        for (int i = 0; i < 4; i++) {
+            xpoints[i] = corners[i][0];
+            ypoints[i] = corners[i][1];
+        }
+
+        Polygon rectangle = new Polygon(xpoints, ypoints, xpoints.length);
         shapes.add(rectangle);
     }
 
     public Shape getLastShape(ArrayList<Shape> s) {
         try {
             return s.get(s.size() - 1);
-        } catch(IndexOutOfBoundsException ioobe) {
-            return null;
-        }
-    }
-
-    public Color getLastColour(ArrayList<Color> c) {
-        try {
-            return c.get(c.size() - 1);
         } catch(IndexOutOfBoundsException ioobe) {
             return null;
         }
@@ -115,7 +110,13 @@ public class DrawPanel extends JPanel {
 
     /** Clear all array lists that contain graphics. */
     public void clearAll() {
-        // todo Add them to the undone models
+        // Add them to the undone models and shapes
+        for (int i = 0; i < shapes.size(); i++) {
+            undoneModels.add(models.get(i));
+            undoneShapes.add(shapes.get(i));
+        }
+
+        // Clear the shapes and models
         shapes.clear();
         models.clear();
 
