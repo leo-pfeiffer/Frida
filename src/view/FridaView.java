@@ -308,7 +308,8 @@ public class FridaView implements Observer, ActionListener {
                 }
                 case "Parallelogram" -> {
                     activateButton(b);
-                    System.out.println("Parallelogram...");
+                    activeModel = new ParallelogramModel();
+                    System.out.println("activeModel is Parallelogram...");
                 }
                 case "Triangle" -> {
                     activateButton(b);
@@ -442,6 +443,12 @@ public class FridaView implements Observer, ActionListener {
         else if (activeModel instanceof TriangleModel) {
             activeModel = new TriangleModel();
             setupNewModel(new Shape2DController((TriangleModel) activeModel));
+        }
+
+        // New parallelogram
+        else if (activeModel instanceof ParallelogramModel) {
+            activeModel = new ParallelogramModel();
+            setupNewModel(new Shape2DController((ParallelogramModel) activeModel));
         }
 
     }
