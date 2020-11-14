@@ -2,8 +2,12 @@ package view;
 
 import controller.IShapeController;
 import controller.LineController;
+import controller.Shape2DController;
 import model.IShapeModel;
+// import model.ShapeModel;
 import model.LineModel;
+import model.RectangleModel;
+import model.ShapeModel2D;
 
 import javax.swing.*;
 import java.awt.*;
@@ -67,8 +71,10 @@ public class FridaView implements Observer, ActionListener {
     private JButton starButton;
     /** Button to activate clear mode. */
     private JButton clearButton;
-    /** Button to pick a new colour. */
-    private ColourPicker colourPicker;
+    /** Button to pick a new line colour. */
+    private ColourPicker lineColourPicker;
+    /** Butto to pick a new fill colour */
+    private ColourPicker fillColourPicker;
 
     /** A list containing all buttons. */
     private ArrayList<JButton> allButtons = new ArrayList<>();
@@ -76,6 +82,11 @@ public class FridaView implements Observer, ActionListener {
     /** The current state of the programme, i.e. draw, undo, redo, move, ... */
     // todo find a smarter way to solve this
     private String state;
+
+    /** Start coordinates. */
+    private int[] start = new int[2];
+    /** Start coordinates. */
+    private int[] end = new int[2];
 
     /** Construct a new object by setting up the components. */
     public FridaView() {
@@ -135,7 +146,11 @@ public class FridaView implements Observer, ActionListener {
 
                 // end a line
                 Point point = e.getPoint();
-                getCurrentController().setEndCoordinates((int) point.getX(), (int) point.getY());
+                setEnd(point);
+                createNewModel();
+                getCurrentController().setStartCoordinates(start[0], start[1]);
+                getCurrentController().setEndCoordinates(end[0], end[1]);
+                // getCurrentController().setEndCoordinates((int) point.getX(), (int) point.getY());
             }
 
             @Override
@@ -143,7 +158,8 @@ public class FridaView implements Observer, ActionListener {
 
                 // start a line
                 Point point = e.getPoint();
-                getCurrentController().setStartCoordinates((int) point.getX(), (int) point.getY());
+                setStart(point);
+                // getCurrentController().setStartCoordinates((int) point.getX(), (int) point.getY());
             }
 
             @Override
@@ -197,8 +213,11 @@ public class FridaView implements Observer, ActionListener {
     public void setupToolbox() {
 
         // Create the components
-        colourPicker = new ColourPicker("Colour");
-        allButtons.add(colourPicker);
+        lineColourPicker = new ColourPicker("Line Colour");
+        allButtons.add(lineColourPicker);
+
+        fillColourPicker = new ColourPicker("Fill Colour");
+        allButtons.add(fillColourPicker);
 
         undoButton = new JButton("Undo");
         allButtons.add(undoButton);
@@ -282,13 +301,17 @@ public class FridaView implements Observer, ActionListener {
 
                 case "Line" -> {
                     activateButton(b);
+                    // set active model but don't set up the model yet
                     activeModel = new LineModel();
-                    setupNewModel(new LineController((LineModel) activeModel));
+                    // setupNewModel(new LineController((LineModel) activeModel));
                     System.out.println("activeModel is LineModel");
                 }
                 case "Rectangle" -> {
                     activateButton(b);
-                    System.out.println("Rectangle...");
+                    // set active model but don't set up the model yet
+                    activeModel = new RectangleModel();
+                    // setupNewModel(new Shape2DController((RectangleModel) activeModel));
+                    System.out.println("activeModel is RectangleModel ...");
                 }
                 case "Parallelogram" -> {
                     activateButton(b);
@@ -315,7 +338,8 @@ public class FridaView implements Observer, ActionListener {
                     mainFrame.repaint();
                     System.out.println("Clear...");
                 }
-                case "Colour" -> System.out.println("Colour...");
+                case "Line Colour" -> System.out.println("Line Colour...");
+                case "Fill Colour" -> System.out.println("Fill Colour...");
                 default -> System.out.println("Unexpected button: " + b.getText());
             }
         });
@@ -355,9 +379,13 @@ public class FridaView implements Observer, ActionListener {
                     public void run() {
                         switch (state) {
                             case "draw":
-
+                                int x = 1;
+                                // If we draw a 2D shape, apply a fill colour
+                                if (activeModel instanceof ShapeModel2D) {
+                                    ((ShapeModel2D) activeModel).setFillColour(fillColourPicker.getColour());
+                                }
                                 // Set the model colour to the current state of the colour picker
-                                activeModel.setLineColour(colourPicker.getColour());
+                                activeModel.setLineColour(lineColourPicker.getColour());
                                 drawPanel.addModel(activeModel);
                                 break;
 
@@ -390,6 +418,30 @@ public class FridaView implements Observer, ActionListener {
                 b.setFont(plain);
                 b.setForeground(Color.DARK_GRAY);
             }
+        }
+    }
+
+    public void setStart(Point p) {
+        this.start[0] = (int) p.getX();
+        this.start[1] = (int) p.getY();
+    }
+
+    public void setEnd(Point p) {
+        this.end[0] = (int) p.getX();
+        this.end[1] = (int) p.getY();
+    }
+
+    public void createNewModel() {
+        // New line
+        if (activeModel instanceof LineModel) {
+            activeModel = new LineModel();
+            setupNewModel(new LineController((LineModel) activeModel));
+        }
+
+        // New rectangle
+        else if (activeModel instanceof RectangleModel) {
+            activeModel = new RectangleModel();
+            setupNewModel(new Shape2DController((RectangleModel) activeModel));
         }
     }
 
