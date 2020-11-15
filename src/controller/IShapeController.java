@@ -7,4 +7,6 @@ public interface IShapeController {
     void setStartCoordinates(int x, int y);
     void setEndCoordinates(int x, int y);
     void setLineColour(Color lineColour);
+    void setLockAspect(boolean lockAspect);
+
 }

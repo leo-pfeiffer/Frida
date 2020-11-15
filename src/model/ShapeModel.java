@@ -20,6 +20,8 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
     /** Y coordinate to where to draw the line. */
     protected int endY;
 
+    protected boolean lockAspect;
+
     /** Custom constructor. */
     public ShapeModel() {}
 
@@ -62,4 +64,7 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
         return this.lineColour;
     }
 
+    public void setLockAspect(boolean lockAspect) {
+        this.lockAspect = lockAspect;
+    }
 }

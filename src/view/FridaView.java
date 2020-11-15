@@ -82,6 +82,9 @@ public class FridaView implements Observer, ActionListener {
     /** Start coordinates. */
     private int[] end = new int[2];
 
+    /** If true, lock aspect ratio. */
+    private boolean lockAspect = false;
+
     /** Construct a new object by setting up the components. */
     public FridaView() {
 
@@ -118,14 +121,13 @@ public class FridaView implements Observer, ActionListener {
         this.setupPanel();
         this.setupMenu();
         this.setupToolbox();
-        // mainFrame.add(outputPane, BorderLayout.CENTER);
     }
 
     /** Setup the draw panel */
     public void setupPanel() {
 
         this.drawPanel.setForeground(DRAW_BACKGROUND_COLOUR);
-        drawPanel.setOpaque(true);
+        this.drawPanel.setOpaque(true);
 
         // Set the preferred size of the draw panel.
         this.drawPanel.setPreferredSize(new Dimension(DRAW_PANEL_WIDTH, DRAW_PANEL_HEIGHT));
@@ -140,6 +142,9 @@ public class FridaView implements Observer, ActionListener {
                 // end a line
                 Point point = e.getPoint();
                 setEnd(point);
+                if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
+                    getCurrentController().setLockAspect(lockAspect);
+                }
                 getCurrentController().setEndCoordinates(end[0], end[1]);
             }
 
@@ -164,6 +169,9 @@ public class FridaView implements Observer, ActionListener {
             @Override
             public void mouseDragged(MouseEvent e) {
                 Point point = e.getPoint();
+                if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
+                    getCurrentController().setLockAspect(lockAspect);
+                }
                 setEnd(point);
                 getCurrentController().setEndCoordinates(end[0], end[1]);
             }
@@ -171,6 +179,8 @@ public class FridaView implements Observer, ActionListener {
             @Override
             public void mouseMoved(MouseEvent e) {}
         });
+
+        addKeyListenerToComponent(this.drawPanel);
 
         // add the drawPanel to the center of the main frame
         mainFrame.add(drawPanel, BorderLayout.SOUTH);
@@ -196,6 +206,8 @@ public class FridaView implements Observer, ActionListener {
             // todo call appropriate method in model
             JOptionPane.showMessageDialog(mainFrame, "Save not linked to model!");
         });
+
+        addKeyListenerToComponent(this.menu);
 
         mainFrame.setJMenuBar(menu);
     }
@@ -251,6 +263,8 @@ public class FridaView implements Observer, ActionListener {
             // Add buttons to toolbox
             toolbox.add(b);
         }
+
+        addKeyListenerToComponent(this.toolbox);
 
         // add toolbox to the top of the main frame
         mainFrame.add(toolbox, BorderLayout.NORTH);
@@ -316,6 +330,49 @@ public class FridaView implements Observer, ActionListener {
                 default -> System.out.println("Unexpected button: " + b.getText());
             }
         });
+    }
+
+    public void addKeyListenerToComponent(JComponent p) {
+        p.addKeyListener(new KeyListener() {
+            @Override
+            public void keyTyped(KeyEvent e) {
+            }
+
+            @Override
+            public void keyPressed(KeyEvent e) {
+                // Lock aspect
+                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
+                    lockAspect = true;
+                }
+                // Undo: U
+                else if (e.getKeyCode() == KeyEvent.VK_U) {
+                    drawPanel.undo();
+                    mainFrame.repaint();
+                }
+                // Redo: R
+                else if (e.getKeyCode() == KeyEvent.VK_R) {
+                    drawPanel.redo();
+                    mainFrame.repaint();
+                }
+                // Save: S
+                else if (e.getKeyCode() == KeyEvent.VK_S) {
+                    // todo
+                }
+                // Load: O
+                else if (e.getKeyCode() == KeyEvent.VK_O) {
+                    // todo
+                }
+            }
+
+            @Override
+            public void keyReleased(KeyEvent e) {
+                if (e.getKeyCode() == KeyEvent.VK_SHIFT){
+                    lockAspect = false;
+                }
+            }
+        });
+        p.setFocusable(true);
+        p.setFocusTraversalKeysEnabled(false);
     }
 
     /** Get the class itself in order to use it in anonymous inner classes.

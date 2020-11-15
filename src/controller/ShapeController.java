@@ -26,4 +26,9 @@ public class ShapeController implements IShapeController {
     public void setLineColour(Color lineColour) {
         model.setLineColour(lineColour);
     }
+
+    @Override
+    public void setLockAspect(boolean lockAspect) {
+        model.setLockAspect(lockAspect);
+    };
 }

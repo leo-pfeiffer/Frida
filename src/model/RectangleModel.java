@@ -15,10 +15,21 @@ public class RectangleModel extends ShapeModel2D {
         int ymin = Math.min(startY, endY);
         int ymax = Math.max(startY, endY);
 
-        // Put them into arrays
-        int[] xpoints = {xmin, xmax, xmax, xmin};
-        int[] ypoints = {ymin, ymin, ymax, ymax};
+        // Declare arrays for coordinates
+        int[] xpoints;
+        int[] ypoints;
 
+        if (!this.lockAspect) {
+            xpoints = new int[]{xmin, xmax, xmax, xmin};
+            ypoints = new int[]{ymin, ymin, ymax, ymax};
+        }
+
+        // if lockAspect, h = w (square)
+        else {
+            int h = Math.abs(endY - startY);
+            xpoints = new int[]{xmin, xmin + h, xmin + h, xmin};
+            ypoints = new int[]{ymin, ymin, ymin + h, ymin + h};
+        }
         this.xpoints = xpoints;
         this.ypoints = ypoints;
 

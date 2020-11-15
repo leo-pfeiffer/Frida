@@ -16,6 +16,8 @@ public abstract class ShapeModel2D extends ShapeModel {
     /** the x coordinates of the corners. */
     protected int[] ypoints;
 
+    protected boolean lockAspect;
+
     /** A two dimensional array containing the x,y coordinates of the corners of the 2D shape
      * or in the case of the Ellipsis, the start and end point of the diameter. */
     protected int[][] corners;
@@ -59,5 +61,10 @@ public abstract class ShapeModel2D extends ShapeModel {
 
     public int[] getYpoints() {
         return ypoints;
+    }
+
+    @Override
+    public void setLockAspect(boolean lockAspect) {
+        this.lockAspect = lockAspect;
     }
 }

@@ -22,7 +22,13 @@ public class EllipseModel extends ShapeModel {
         this.x  = Math.min(startX, endX);
         this.y = Math.min(startY, endY);
         this.w = Math.abs(startX - endX);
-        this.h = Math.abs(startY - endY);
+
+        // if lockAspect, h = w
+        if (this.lockAspect) {
+            this.h = this.w;
+        } else {
+            this.h = Math.abs(startY - endY);
+        }
     }
 
     /** Get all positional variables.

@@ -33,4 +33,9 @@ public class Shape2DController implements IShapeController{
         model.setFillColour(fillColour);
     }
 
+    @Override
+    public void setLockAspect(boolean lockAspect) {
+        model.setLockAspect(lockAspect);
+    };
+
 }
