@@ -195,14 +195,14 @@ public class DrawPanel extends JPanel {
         }
     }
 
-    public void writeToFile() {
-        WriteToFile.write(models, "models");
+    public void writeToFile(String filename) {
+        WriteToFile.write(models, filename);
     }
 
-    public void readFromFile() {
+    public void readFromFile(String filename) {
         try {
             System.out.println("Reading...");
-            ArrayList<IShapeModel> newModels = ReadFromFile.read("models.frida");
+            ArrayList<IShapeModel> newModels = ReadFromFile.read(filename);
             System.out.println("Done Reading...");
 
             // set the new models

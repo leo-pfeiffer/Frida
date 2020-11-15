@@ -8,6 +8,7 @@ import model.*;
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
+import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ArrayList;
@@ -139,8 +140,13 @@ public class FridaView implements Observer, ActionListener {
         openAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Opening");
-                drawPanel.readFromFile();
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Open");
+                int returnVal = fileChooser.showOpenDialog(fileChooser);
+                if (returnVal == JFileChooser.APPROVE_OPTION) {
+                    File selectedFile = fileChooser.getSelectedFile();
+                    drawPanel.readFromFile(selectedFile.toString());
+                }
                 mainFrame.repaint();
             }
         };
@@ -148,8 +154,16 @@ public class FridaView implements Observer, ActionListener {
         saveAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("Saving");
-                drawPanel.writeToFile();
+                JFileChooser fileChooser = new JFileChooser();
+                fileChooser.setDialogTitle("Save");
+
+                int userSelection = fileChooser.showSaveDialog(fileChooser);
+
+                if (userSelection == JFileChooser.APPROVE_OPTION) {
+                    File saveFile = fileChooser.getSelectedFile();
+                    drawPanel.writeToFile(saveFile.toString());
+                }
+
             }
         };
 
