@@ -85,6 +85,14 @@ public class FridaView implements Observer, ActionListener {
     /** If true, lock aspect ratio. */
     private boolean lockAspect = false;
 
+    Action clearAction;
+    Action undoAction;
+    Action redoAction;
+    Action lockAspectAction;
+    Action unlockAspectAction;
+    Action saveAction;
+    Action loadAction;
+
     /** Construct a new object by setting up the components. */
     public FridaView() {
 
@@ -93,6 +101,9 @@ public class FridaView implements Observer, ActionListener {
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
         mainFrame.setSize(DEFAULT_FRAME_WIDTH, DEFAULT_FRAME_HEIGHT);
         mainFrame.setVisible(true);
+
+        // Create actions
+        createActions();
 
         // Create the control and draw panels
         drawPanel = new DrawPanel();
@@ -115,6 +126,62 @@ public class FridaView implements Observer, ActionListener {
         mainFrame.pack();
     }
 
+    public void createActions() {
+        lockAspectAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("lock");
+                lockAspect = true;
+            }
+        };
+
+        unlockAspectAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.out.println("unlock");
+                lockAspect = false;
+            }
+        };
+
+        loadAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // todo
+            }
+        };
+
+        saveAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                // todo
+            }
+        };
+
+        redoAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drawPanel.redo();
+                mainFrame.repaint();
+            }
+        };
+
+        undoAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drawPanel.undo();
+                mainFrame.repaint();
+            }
+        };
+
+        clearAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                drawPanel.clearAll();
+                mainFrame.repaint();
+            }
+        };
+    }
+
     /** Method to setup the different components of the main frame, i.e. toolbox and menu,
      * and add them to the main frame. */
     public void setupComponents() {
@@ -133,57 +200,47 @@ public class FridaView implements Observer, ActionListener {
         this.drawPanel.setPreferredSize(new Dimension(DRAW_PANEL_WIDTH, DRAW_PANEL_HEIGHT));
 
         // add a MouseListener that listens for clicks and releases
-        this.drawPanel.addMouseListener(new MouseListener() {
-            @Override
-            public void mouseClicked(MouseEvent e) {}
-
-            @Override
-            public void mouseReleased(MouseEvent e) {
-                // end a line
-                Point point = e.getPoint();
-                setEnd(point);
-                if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
-                    getCurrentController().setLockAspect(lockAspect);
-                }
-                getCurrentController().setEndCoordinates(end[0], end[1]);
-            }
-
-            @Override
-            public void mousePressed(MouseEvent e) {
-                // start a line
-                Point point = e.getPoint();
-                setStart(point);
-                createNewModel();
-                getCurrentController().setStartCoordinates(start[0], start[1]);
-            }
-
-            @Override
-            public void mouseEntered(MouseEvent e) {}
-
-            @Override
-            public void mouseExited(MouseEvent e) {}
-        });
+        this.addMouseListenerToDrawPanel();
 
         // Add a motion listener to listen for mouse drags
-        this.drawPanel.addMouseMotionListener(new MouseMotionListener() {
-            @Override
-            public void mouseDragged(MouseEvent e) {
-                Point point = e.getPoint();
-                if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
-                    getCurrentController().setLockAspect(lockAspect);
-                }
-                setEnd(point);
-                getCurrentController().setEndCoordinates(end[0], end[1]);
-            }
+        this.addMouseMotionListenerToDrawPanel();
 
-            @Override
-            public void mouseMoved(MouseEvent e) {}
-        });
-
-        addKeyListenerToComponent(this.drawPanel);
+        // Add input and action maps
+        this.addActionAndInputMapsToDrawPanel();
 
         // add the drawPanel to the center of the main frame
         mainFrame.add(drawPanel, BorderLayout.SOUTH);
+    }
+
+    private void addActionAndInputMapsToDrawPanel() {
+
+        // Clear
+        this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke("C"), "clear");
+
+        this.drawPanel.getActionMap().put("clear", clearAction);
+
+        // Undo
+        this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke("U"), "undo");
+
+        this.drawPanel.getActionMap().put("undo", undoAction);
+
+        // Redo
+        this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke("R"), "redo");
+
+        this.drawPanel.getActionMap().put("redo", redoAction);
+
+        // Lock Aspect
+
+        this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke("L"), "lock aspect");
+        this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke("released L"), "unlock aspect");
+
+        this.drawPanel.getActionMap().put("lock aspect", lockAspectAction);
+        this.drawPanel.getActionMap().put("unlock aspect", unlockAspectAction);
     }
 
     public void setupMenu() {
@@ -206,8 +263,6 @@ public class FridaView implements Observer, ActionListener {
             // todo call appropriate method in model
             JOptionPane.showMessageDialog(mainFrame, "Save not linked to model!");
         });
-
-        addKeyListenerToComponent(this.menu);
 
         mainFrame.setJMenuBar(menu);
     }
@@ -263,8 +318,6 @@ public class FridaView implements Observer, ActionListener {
             // Add buttons to toolbox
             toolbox.add(b);
         }
-
-        addKeyListenerToComponent(this.toolbox);
 
         // add toolbox to the top of the main frame
         mainFrame.add(toolbox, BorderLayout.NORTH);
@@ -332,47 +385,54 @@ public class FridaView implements Observer, ActionListener {
         });
     }
 
-    public void addKeyListenerToComponent(JComponent p) {
-        p.addKeyListener(new KeyListener() {
+    public void addMouseListenerToDrawPanel() {
+        this.drawPanel.addMouseListener(new MouseListener() {
             @Override
-            public void keyTyped(KeyEvent e) {
+            public void mouseClicked(MouseEvent e) {}
+
+            @Override
+            public void mouseReleased(MouseEvent e) {
+                // end a line
+                Point point = e.getPoint();
+                setEnd(point);
+                if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
+                    getCurrentController().setLockAspect(lockAspect);
+                }
+                getCurrentController().setEndCoordinates(end[0], end[1]);
             }
 
             @Override
-            public void keyPressed(KeyEvent e) {
-                // Lock aspect
-                if (e.getKeyCode() == KeyEvent.VK_SHIFT) {
-                    lockAspect = true;
-                }
-                // Undo: U
-                else if (e.getKeyCode() == KeyEvent.VK_U) {
-                    drawPanel.undo();
-                    mainFrame.repaint();
-                }
-                // Redo: R
-                else if (e.getKeyCode() == KeyEvent.VK_R) {
-                    drawPanel.redo();
-                    mainFrame.repaint();
-                }
-                // Save: S
-                else if (e.getKeyCode() == KeyEvent.VK_S) {
-                    // todo
-                }
-                // Load: O
-                else if (e.getKeyCode() == KeyEvent.VK_O) {
-                    // todo
-                }
+            public void mousePressed(MouseEvent e) {
+                // start a line
+                Point point = e.getPoint();
+                setStart(point);
+                createNewModel();
+                getCurrentController().setStartCoordinates(start[0], start[1]);
             }
 
             @Override
-            public void keyReleased(KeyEvent e) {
-                if (e.getKeyCode() == KeyEvent.VK_SHIFT){
-                    lockAspect = false;
-                }
-            }
+            public void mouseEntered(MouseEvent e) {}
+
+            @Override
+            public void mouseExited(MouseEvent e) {}
         });
-        p.setFocusable(true);
-        p.setFocusTraversalKeysEnabled(false);
+    }
+
+    private void addMouseMotionListenerToDrawPanel() {
+        this.drawPanel.addMouseMotionListener(new MouseMotionListener() {
+            @Override
+            public void mouseDragged(MouseEvent e) {
+                Point point = e.getPoint();
+                if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
+                    getCurrentController().setLockAspect(lockAspect);
+                }
+                setEnd(point);
+                getCurrentController().setEndCoordinates(end[0], end[1]);
+            }
+
+            @Override
+            public void mouseMoved(MouseEvent e) {}
+        });
     }
 
     /** Get the class itself in order to use it in anonymous inner classes.
