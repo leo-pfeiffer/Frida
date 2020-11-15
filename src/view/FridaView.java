@@ -91,7 +91,7 @@ public class FridaView implements Observer, ActionListener {
     Action lockAspectAction;
     Action unlockAspectAction;
     Action saveAction;
-    Action loadAction;
+    Action openAction;
 
     /** Construct a new object by setting up the components. */
     public FridaView() {
@@ -130,7 +130,6 @@ public class FridaView implements Observer, ActionListener {
         lockAspectAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("lock");
                 lockAspect = true;
             }
         };
@@ -138,22 +137,24 @@ public class FridaView implements Observer, ActionListener {
         unlockAspectAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                System.out.println("unlock");
                 lockAspect = false;
             }
         };
 
-        loadAction = new AbstractAction() {
+        openAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // todo
+                System.out.println("Opening");
+                drawPanel.readFromFile();
+                mainFrame.repaint();
             }
         };
 
         saveAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
-                // todo
+                System.out.println("Saving");
+                drawPanel.writeToFile();
             }
         };
 
@@ -232,8 +233,19 @@ public class FridaView implements Observer, ActionListener {
 
         this.drawPanel.getActionMap().put("redo", redoAction);
 
-        // Lock Aspect
+        // Save
+        this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke("S"), "save");
 
+        this.drawPanel.getActionMap().put("save", saveAction);
+
+        // Load
+        this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke("O"), "open");
+
+        this.drawPanel.getActionMap().put("open", openAction);
+
+        // Lock Aspect
         this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke("L"), "lock aspect");
         this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(

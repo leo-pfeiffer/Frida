@@ -1,12 +1,10 @@
 package view;
 
-import model.EllipseModel;
-import model.IShapeModel;
-import model.LineModel;
-import model.ShapeModel2D;
+import model.*;
 
 import java.awt.*;
 import java.awt.geom.Ellipse2D;
+import java.io.IOException;
 import java.util.ArrayList;
 
 import java.awt.geom.Line2D;
@@ -56,6 +54,10 @@ public class DrawPanel extends JPanel {
 
     public void addModel(IShapeModel model) {
         models.add(model);
+        addShapeFromModel(model);
+    }
+
+    public void addShapeFromModel(IShapeModel model) {
         if (model instanceof LineModel) {
             addLine((LineModel) model);
         } else if(model instanceof EllipseModel) {
@@ -190,6 +192,28 @@ public class DrawPanel extends JPanel {
             // handle models
             undoneModels.remove(m);
             models.add(m);
+        }
+    }
+
+    public void writeToFile() {
+        WriteToFile.write(models, "models");
+    }
+
+    public void readFromFile() {
+        try {
+            System.out.println("Reading...");
+            ArrayList<IShapeModel> newModels = ReadFromFile.read("models.frida");
+            System.out.println("Done Reading...");
+
+            // set the new models
+            models = newModels;
+            shapes.clear();
+            for (IShapeModel m : models) {
+                addShapeFromModel(m);
+            }
+
+        } catch (IOException | ClassNotFoundException e) {
+            System.err.println(e.getMessage());
         }
     }
 }

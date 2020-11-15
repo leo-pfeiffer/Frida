@@ -1,11 +1,12 @@
 package model;
 
 import java.awt.Color;
+import java.io.Serializable;
 
 /** This is an interface to be implemented by all shapes that can be drawn
  * by the user.
  * @author 190026921 */
-public interface IShapeModel {
+public interface IShapeModel extends Serializable {
 
     /** Method to call setChanged and notifyObserver. */
     void update();
