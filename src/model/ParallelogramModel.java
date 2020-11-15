@@ -8,7 +8,7 @@ public class ParallelogramModel extends ShapeModel2D {
     public ParallelogramModel() { }
 
     /** Calculate the corners of the parallelogram. */
-    public void calcCorners() {
+    private void calcPosition() {
 
         final float skew = 0.67f;
 
@@ -30,8 +30,11 @@ public class ParallelogramModel extends ShapeModel2D {
             int[] xpoints = {xmin, xmin + (int) (skew * width),
                     xmax, xmin + (int) ((1 - skew) * width)};
 
+            this.xpoints = xpoints;
+            this.ypoints = ypoints;
+
             // Set the corners
-            setCorners(xpoints, ypoints);
+            setCorners();
         }
         // Top right to bottom left
         else if ((startX > endX & startY < endY)
@@ -39,16 +42,33 @@ public class ParallelogramModel extends ShapeModel2D {
             int[] xpoints = {xmin + (int) ((1 - skew) * width),
                     xmax, xmin + (int) (skew * width), xmin};
 
+            this.xpoints = xpoints;
+            this.ypoints = ypoints;
+
             // Set the corners
-            setCorners(xpoints, ypoints);
+            setCorners();
         }
     }
 
     /**  {@inheritDoc} */
     @Override
     public int[][] getCorners() {
-        calcCorners();
+        calcPosition();
         return super.getCorners();
+    }
+
+    /**  {@inheritDoc} */
+    @Override
+    public int[] getXpoints() {
+        calcPosition();
+        return xpoints;
+    }
+
+    /**  {@inheritDoc} */
+    @Override
+    public int[] getYpoints() {
+        calcPosition();
+        return ypoints;
     }
 
 }

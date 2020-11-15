@@ -1,6 +1,6 @@
 package model;
 
-import java.awt.Color;
+import java.awt.*;
 
 /** Abstract class for all two dimensional models. The class extends its parent class
  * by adding a field that denotes the fill colour of the model and corresponding
@@ -10,6 +10,11 @@ public abstract class ShapeModel2D extends ShapeModel {
 
     /** Fill colour of the shape. */
     private Color fillColour;
+
+    /** the x coordinates of the corners. */
+    protected int[] xpoints;
+    /** the x coordinates of the corners. */
+    protected int[] ypoints;
 
     /** A two dimensional array containing the x,y coordinates of the corners of the 2D shape
      * or in the case of the Ellipsis, the start and end point of the diameter. */
@@ -36,18 +41,23 @@ public abstract class ShapeModel2D extends ShapeModel {
         return this.corners;
     }
 
-    /** Set the corners.
-     * @param xpoints the x coordinates of the corners.
-     * @param ypoints the y coordinates of the corners. */
-    public void setCorners(int[] xpoints, int[] ypoints) {
+    /** Set the corners.*/
+    public void setCorners() {
         
-        this.corners = new int[xpoints.length][2];
+        this.corners = new int[this.xpoints.length][2];
 
         // Fill the corner coordinates into to the corners array
-        for (int i = 0; i < xpoints.length; i++) {
-            this.corners[i][0] = xpoints[i];
-            this.corners[i][1] = ypoints[i];
+        for (int i = 0; i < this.xpoints.length; i++) {
+            this.corners[i][0] = this.xpoints[i];
+            this.corners[i][1] = this.ypoints[i];
         }
     }
 
+    public int[] getXpoints() {
+        return xpoints;
+    }
+
+    public int[] getYpoints() {
+        return ypoints;
+    }
 }

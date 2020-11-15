@@ -8,7 +8,7 @@ public class HexagonModel extends ShapeModel2D {
     public HexagonModel() { }
 
     /** Calculate the corners of the hexagon. */
-    public void calcCorners() {
+    private void calcPosition() {
         // Calculate circumradius of the hexagon using Pythagoras
         final int a = endX - startX;
         final int b = endY - startY;
@@ -29,15 +29,32 @@ public class HexagonModel extends ShapeModel2D {
             ypoints[i] = (int) (radius * Math.sin((- degMultiple) * i) + midY);
         }
 
+        this.xpoints = xpoints;
+        this.ypoints = ypoints;
+
         // set the corners
-        setCorners(xpoints, ypoints);
+        setCorners();
     }
 
     /**  {@inheritDoc} */
     @Override
     public int[][] getCorners() {
-        calcCorners();
+        calcPosition();
         return super.getCorners();
+    }
+
+    /**  {@inheritDoc} */
+    @Override
+    public int[] getXpoints() {
+        calcPosition();
+        return xpoints;
+    }
+
+    /**  {@inheritDoc} */
+    @Override
+    public int[] getYpoints() {
+        calcPosition();
+        return ypoints;
     }
 
 }

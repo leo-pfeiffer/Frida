@@ -1,6 +1,6 @@
 package model;
 
-/** Represents a ellipse that is created by a framing rectangle created from the
+/** Represents an ellipse that is created by a framing rectangle created from the
  * start to the end point.
  * @author 190026921 */
 public class EllipseModel extends ShapeModel {
@@ -18,7 +18,7 @@ public class EllipseModel extends ShapeModel {
     public EllipseModel() { }
 
     /** Calculate positional variables. */
-    public void calcPosition() {
+    private void calcPosition() {
         this.x  = Math.min(startX, endX);
         this.y = Math.min(startY, endY);
         this.w = Math.abs(startX - endX);
