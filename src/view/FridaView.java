@@ -38,17 +38,13 @@ public class FridaView implements Observer, ActionListener {
     /** This is the panel we will be drawing on. */
     private DrawPanel drawPanel;
     /** Main menu for saving, loading etc. */
-    private JMenuBar menu;
+    private JMenuBar fileMenu;
+    /** Main menu for saving, loading etc. */
+    private JMenuBar editMenu;
     /** Toolbox to switch shapes etc. */
     private JToolBar toolbox;
 
     // Buttons
-    /** Button to undo last action. */
-    private JButton undoButton;
-    /** Button to redo last action. */
-    private JButton redoButton;
-    /** Button to activate moving a shape. */
-    private JButton moveButton;
     /** Button to activate line mode. */
     private JButton lineButton;
     /** Button to activate rectangle mode. */
@@ -63,8 +59,6 @@ public class FridaView implements Observer, ActionListener {
     private JButton ellipseButton;
     /** Button to activate star mode. */
     private JButton starButton;
-    /** Button to activate clear mode. */
-    private JButton clearButton;
     /** Button to pick a new line colour. */
     private ColourPicker lineColourPicker;
     /** Button to pick a new fill colour */
@@ -108,8 +102,9 @@ public class FridaView implements Observer, ActionListener {
         // Create the control and draw panels
         drawPanel = new DrawPanel();
 
-        // Create the menu and toolbox
-        menu = new JMenuBar();
+        // Create the menus and toolbox
+        fileMenu = new JMenuBar();
+        editMenu = new JMenuBar();
         toolbox = new JToolBar();
 
         // Setup the components
@@ -187,7 +182,8 @@ public class FridaView implements Observer, ActionListener {
      * and add them to the main frame. */
     public void setupComponents() {
         this.setupPanel();
-        this.setupMenu();
+        this.setupFileMenu();
+        this.setupEditMenu();
         this.setupToolbox();
     }
 
@@ -255,28 +251,64 @@ public class FridaView implements Observer, ActionListener {
         this.drawPanel.getActionMap().put("unlock aspect", unlockAspectAction);
     }
 
-    public void setupMenu() {
+    public void setupFileMenu() {
         // Fill menu bar
         JMenu file = new JMenu ("File");
-        JMenuItem load = new JMenuItem ("Load");
+        JMenuItem open = new JMenuItem ("Open");
         JMenuItem save = new JMenuItem ("Save");
         JMenuItem help = new JMenuItem ("Help");
-        file.add (load);
+        file.add (open);
         file.add (save);
         file.add (help);
-        menu.add (file);
+        fileMenu.add (file);
 
-        load.addActionListener(e -> {
-            // todo call appropriate method in model
-            JOptionPane.showMessageDialog(mainFrame, "Load not linked to model!");
+        open.addActionListener(e -> {
+            openAction.actionPerformed(e);
         });
 
         save.addActionListener(e -> {
-            // todo call appropriate method in model
-            JOptionPane.showMessageDialog(mainFrame, "Save not linked to model!");
+            saveAction.actionPerformed(e);
         });
 
-        mainFrame.setJMenuBar(menu);
+        help.addActionListener(e -> {
+            // todo call appropriate method in model
+            JOptionPane.showMessageDialog(mainFrame, "Help not linked to model!");
+        });
+
+        mainFrame.setJMenuBar(fileMenu);
+    }
+
+    public void setupEditMenu() {
+        // Fill menu bar
+        JMenu edit = new JMenu ("Edit");
+        JMenuItem undo = new JMenuItem ("Undo");
+        JMenuItem redo = new JMenuItem ("Redo");
+        JMenuItem move = new JMenuItem ("Move");
+        JMenuItem clear = new JMenuItem ("Clear");
+        edit.add (undo);
+        edit.add (redo);
+        edit.add (move);
+        edit.add (clear);
+        fileMenu.add (edit);
+
+        undo.addActionListener(e -> {
+            undoAction.actionPerformed(e);
+        });
+
+        redo.addActionListener(e -> {
+            redoAction.actionPerformed(e);
+        });
+
+        move.addActionListener(e -> {
+            // todo call appropriate method in model
+            JOptionPane.showMessageDialog(mainFrame, "Move not linked to model!");
+        });
+
+        clear.addActionListener(e -> {
+            clearAction.actionPerformed(e);
+        });
+
+        mainFrame.setJMenuBar(fileMenu);
     }
 
     /** Set up all components of the toolbox, add the ActionListeners and
@@ -289,15 +321,6 @@ public class FridaView implements Observer, ActionListener {
 
         fillColourPicker = new ColourPicker("Fill Colour", drawPanel.getBackground());
         allButtons.add(fillColourPicker);
-
-        undoButton = new JButton("Undo");
-        allButtons.add(undoButton);
-
-        redoButton = new JButton("Redo");
-        allButtons.add(redoButton);
-
-        moveButton = new JButton("Move");
-        allButtons.add(moveButton);
 
         lineButton = new JButton("Line");
         allButtons.add(lineButton);
@@ -319,9 +342,6 @@ public class FridaView implements Observer, ActionListener {
 
         starButton = new JButton("Star");
         allButtons.add(starButton);
-
-        clearButton = new JButton("Clear");
-        allButtons.add(clearButton);
 
         for (JButton b : allButtons) {
             // add ActionListeners
@@ -347,11 +367,11 @@ public class FridaView implements Observer, ActionListener {
             // Define the appropriate action upon actionPerformed for each button
             switch (b.getText()) {
                 case "Undo" -> {
-                    drawPanel.undo();
+                    undoAction.actionPerformed(e);
                     mainFrame.repaint();
                 }
                 case "Redo" -> {
-                    drawPanel.redo();
+                    redoAction.actionPerformed(e);
                     mainFrame.repaint();
                 }
                 case "Move" -> {
@@ -387,7 +407,7 @@ public class FridaView implements Observer, ActionListener {
                     activeModel = new StarModel();
                 }
                 case "Clear" -> {
-                    drawPanel.clearAll();
+                    clearAction.actionPerformed(e);
                     mainFrame.repaint();
                 }
                 case "Line Colour" -> System.out.println("Line Colour...");
