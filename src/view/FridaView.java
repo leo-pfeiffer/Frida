@@ -1,7 +1,7 @@
 package view;
 
 import controller.IShapeController;
-import controller.LineController;
+import controller.ShapeController;
 import controller.Shape2DController;
 import model.*;
 
@@ -89,7 +89,7 @@ public class FridaView implements Observer, ActionListener {
         activeModel = new LineModel();
 
         // add observer, add model to models, add controller to controllers
-        setupNewModel(new LineController((LineModel) activeModel));
+        setupNewModel(new ShapeController((LineModel) activeModel));
 
         // Create the main frame for the view
         mainFrame = new JFrame("Frida");
@@ -279,7 +279,6 @@ public class FridaView implements Observer, ActionListener {
                 }
                 case "Line" -> {
                     activateButton(b);
-                    // set active model but don't set up the model yet
                     activeModel = new LineModel();
                 }
                 case "Rectangle" -> {
@@ -300,7 +299,7 @@ public class FridaView implements Observer, ActionListener {
                 }
                 case "Ellipse" -> {
                     activateButton(b);
-                    System.out.println("Ellipse...");
+                    activeModel = new EllipseModel();
                 }
                 case "Star" -> {
                     activateButton(b);
@@ -407,11 +406,12 @@ public class FridaView implements Observer, ActionListener {
         // New line
         if (activeModel instanceof LineModel) {
             activeModel = new LineModel();
-            setupNewModel(new LineController((LineModel) activeModel));
+            setupNewModel(new ShapeController((LineModel) activeModel));
         }
 
         // New rectangle
-        else if (activeModel instanceof RectangleModel) {
+        else if (activeModel instanceof RectangleModel
+                & !(activeModel instanceof EllipseModel)) {
             activeModel = new RectangleModel();
             setupNewModel(new Shape2DController((RectangleModel) activeModel));
         }
@@ -438,6 +438,12 @@ public class FridaView implements Observer, ActionListener {
         else if (activeModel instanceof HexagonModel) {
             activeModel = new HexagonModel();
             setupNewModel(new Shape2DController((HexagonModel) activeModel));
+        }
+
+        // New ellipse
+        if (activeModel instanceof EllipseModel) {
+            activeModel = new EllipseModel();
+            setupNewModel(new ShapeController((EllipseModel) activeModel));
         }
 
     }

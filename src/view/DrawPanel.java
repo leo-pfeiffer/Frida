@@ -1,10 +1,12 @@
 package view;
 
+import model.EllipseModel;
 import model.IShapeModel;
 import model.LineModel;
 import model.ShapeModel2D;
 
 import java.awt.*;
+import java.awt.geom.Ellipse2D;
 import java.util.ArrayList;
 
 import java.awt.geom.Line2D;
@@ -56,6 +58,8 @@ public class DrawPanel extends JPanel {
         models.add(model);
         if (model instanceof LineModel) {
             addLine((LineModel) model);
+        } else if(model instanceof EllipseModel) {
+            addEllipse((EllipseModel) model);
         } else if (model instanceof ShapeModel2D){
             addPolygon((ShapeModel2D) model);
         }
@@ -73,22 +77,39 @@ public class DrawPanel extends JPanel {
         shapes.add(line);
     }
 
+    /** Add a new ellipse to the panel.
+     * @param model The ellipse model the ellipse is based on.
+     * */
+    public void addEllipse(EllipseModel model) {
+
+        // Get position of the ellipse
+        int[] pos = model.getPosition();
+
+        // Create the ellipse shape
+        Ellipse2D ellipse = new Ellipse2D.Double(pos[0], pos[1], pos[2], pos[3]);
+        shapes.add(ellipse);
+    }
+
     /** Add a new polygon type shape to the panel.
      * @param model the model for any Polygon
      * */
     public void addPolygon(ShapeModel2D model) {
 
+        // Get the corners of the polygon
         int[][] corners = model.getCorners();
         final int numCorners = corners.length;
 
+        // Create arrays for x and y coordinates of the corners
         int[] xpoints = new int[numCorners];
         int[] ypoints = new int[numCorners];
 
+        // Extract x and y coordinates of the corners
         for (int i = 0; i < numCorners; i++) {
             xpoints[i] = corners[i][0];
             ypoints[i] = corners[i][1];
         }
 
+        // Create the polygon
         Polygon rectangle = new Polygon(xpoints, ypoints, xpoints.length);
         shapes.add(rectangle);
     }

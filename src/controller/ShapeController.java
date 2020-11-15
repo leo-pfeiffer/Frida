@@ -1,14 +1,14 @@
 package controller;
 
-import model.LineModel;
+import model.ShapeModel;
 
 import java.awt.Color;
 
-public class LineController implements IShapeController {
+public class ShapeController implements IShapeController {
 
-    private LineModel model;
+    private ShapeModel model;
 
-    public LineController(LineModel model) {
+    public ShapeController(ShapeModel model) {
         this.model = model;
     }
 

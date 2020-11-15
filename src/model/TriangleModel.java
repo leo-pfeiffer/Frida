@@ -7,7 +7,7 @@ public class TriangleModel extends ShapeModel2D {
     /** Custom constructor. */
     public TriangleModel() { }
 
-    /** Setter method for the corners of the rectangle. */
+    /** Setter method for the corners of the triangle. */
     public void calcCorners() {
 
         // Calculate corners

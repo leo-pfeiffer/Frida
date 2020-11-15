@@ -7,7 +7,7 @@ public class ParallelogramModel extends ShapeModel2D {
     /** Custom constructor. */
     public ParallelogramModel() { }
 
-    /** Calculate the corners of the rectangle. */
+    /** Calculate the corners of the parallelogram. */
     public void calcCorners() {
 
         final float skew = 0.67f;
