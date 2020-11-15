@@ -31,4 +31,14 @@ public class ShapeController implements IShapeController {
     public void setLockAspect(boolean lockAspect) {
         model.setLockAspect(lockAspect);
     };
+
+    @Override
+    public void setMoveStart(int x, int y) {
+        model.setMoveStart(x, y);
+    }
+
+    @Override
+    public void setMoveEnd(int x, int y) {
+        model.setMoveEnd(x, y);
+    }
 }

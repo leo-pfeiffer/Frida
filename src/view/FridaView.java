@@ -38,9 +38,9 @@ public class FridaView implements Observer, ActionListener {
     private JFrame mainFrame;
     /** This is the panel we will be drawing on. */
     private DrawPanel drawPanel;
-    /** Main menu for saving, loading etc. */
+    /** File menu for saving, loading etc. */
     private JMenuBar fileMenu;
-    /** Main menu for saving, loading etc. */
+    /** Editing menu for undoing etc. */
     private JMenuBar editMenu;
     /** Toolbox to switch shapes etc. */
     private JToolBar toolbox;
@@ -60,6 +60,8 @@ public class FridaView implements Observer, ActionListener {
     private JButton ellipseButton;
     /** Button to activate star mode. */
     private JButton starButton;
+    /** Button to activate move mode. */
+    private JButton moveButton;
     /** Button to pick a new line colour. */
     private ColourPicker lineColourPicker;
     /** Button to pick a new fill colour */
@@ -68,10 +70,6 @@ public class FridaView implements Observer, ActionListener {
     /** A list containing all buttons. */
     private ArrayList<JButton> allButtons = new ArrayList<>();
 
-    /** The current state of the programme, i.e. draw, undo, redo, move, ... */
-    // todo find a smarter way to solve this
-    private String state;
-
     /** Start coordinates. */
     private int[] start = new int[2];
     /** Start coordinates. */
@@ -79,6 +77,9 @@ public class FridaView implements Observer, ActionListener {
 
     /** If true, lock aspect ratio. */
     private boolean lockAspect = false;
+
+    private boolean moveMode = false;
+    private boolean moving = false;
 
     Action clearAction;
     Action undoAction;
@@ -255,7 +256,7 @@ public class FridaView implements Observer, ActionListener {
 
         this.drawPanel.getActionMap().put("open", openAction);
 
-        // Lock Aspect
+        // Lock Aspect Ratio
         this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke("L"), "lock aspect");
         this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
@@ -336,6 +337,9 @@ public class FridaView implements Observer, ActionListener {
         fillColourPicker = new ColourPicker("Fill Colour", drawPanel.getBackground());
         allButtons.add(fillColourPicker);
 
+        moveButton = new JButton("Move");
+        allButtons.add(moveButton);
+
         lineButton = new JButton("Line");
         allButtons.add(lineButton);
 
@@ -380,17 +384,8 @@ public class FridaView implements Observer, ActionListener {
 
             // Define the appropriate action upon actionPerformed for each button
             switch (b.getText()) {
-                case "Undo" -> {
-                    undoAction.actionPerformed(e);
-                    mainFrame.repaint();
-                }
-                case "Redo" -> {
-                    redoAction.actionPerformed(e);
-                    mainFrame.repaint();
-                }
                 case "Move" -> {
                     activateButton(b);
-                    state = "move";
                 }
                 case "Line" -> {
                     activateButton(b);
@@ -420,13 +415,6 @@ public class FridaView implements Observer, ActionListener {
                     activateButton(b);
                     activeModel = new StarModel();
                 }
-                case "Clear" -> {
-                    clearAction.actionPerformed(e);
-                    mainFrame.repaint();
-                }
-                case "Line Colour" -> System.out.println("Line Colour...");
-                case "Fill Colour" -> System.out.println("Fill Colour...");
-                default -> System.out.println("Unexpected button: " + b.getText());
             }
         });
     }
@@ -440,20 +428,42 @@ public class FridaView implements Observer, ActionListener {
             public void mouseReleased(MouseEvent e) {
                 // end a line
                 Point point = e.getPoint();
-                setEnd(point);
-                if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
-                    getCurrentController().setLockAspect(lockAspect);
+
+                if (!moveMode) {
+                    setEnd(point);
+                    if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
+                        getCurrentController().setLockAspect(lockAspect);
+                    }
+                    getCurrentController().setEndCoordinates(end[0], end[1]);
                 }
-                getCurrentController().setEndCoordinates(end[0], end[1]);
+                /* todo:
+                 *   - get the controller of the newly activeModel
+                 *   - call setMoveEnd on that controller */
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
                 // start a line
                 Point point = e.getPoint();
-                setStart(point);
-                createNewModel();
-                getCurrentController().setStartCoordinates(start[0], start[1]);
+
+                if (!moveMode) {
+                    setStart(point);
+                    createNewModel();
+                    getCurrentController().setStartCoordinates(start[0], start[1]);
+                }
+                /* todo:
+                *   - get the controller of the newly activeModel
+                *   - call setMoveStart on that controller
+                *   - also handle the order of models and controllers */
+                // else {
+                    // moving = false;
+                    // IShapeModel modelOnPoint = drawPanel.getModelOnPoint(point);
+                    // if (modelOnPoint != null) {
+                        // activeModel = modelOnPoint;
+                        // moving = true;
+
+                   // }
+                // }
             }
 
             @Override
@@ -469,11 +479,17 @@ public class FridaView implements Observer, ActionListener {
             @Override
             public void mouseDragged(MouseEvent e) {
                 Point point = e.getPoint();
-                if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
-                    getCurrentController().setLockAspect(lockAspect);
+                if (!moveMode) {
+                    if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
+                        getCurrentController().setLockAspect(lockAspect);
+                    }
+                    setEnd(point);
+                    getCurrentController().setEndCoordinates(end[0], end[1]);
                 }
-                setEnd(point);
-                getCurrentController().setEndCoordinates(end[0], end[1]);
+
+                /* todo:
+                 *   - get the controller of the newly activeModel
+                 *   - call setMoveEnd on that controller */
             }
 
             @Override
@@ -503,9 +519,6 @@ public class FridaView implements Observer, ActionListener {
 
         // add to draw panel
         drawPanel.addModel(activeModel);
-
-        // Set state to draw
-        state = "draw";
     }
 
     @Override
@@ -516,26 +529,19 @@ public class FridaView implements Observer, ActionListener {
         SwingUtilities.invokeLater(
                 new Runnable() {
                     public void run() {
-                        switch (state) {
-                            case "draw":
-                                int x = 1;
-                                // If we draw a 2D shape, apply a fill colour
-                                if (activeModel instanceof ShapeModel2D) {
-                                    ((ShapeModel2D) activeModel).setFillColour(fillColourPicker.getColour());
-                                }
-                                // Set the model colour to the current state of the colour picker
-                                activeModel.setLineColour(lineColourPicker.getColour());
-                                // Update the position of the shape.
-                                drawPanel.updateLastShape();
-                                break;
 
-                            case "move":
-                                break;
-
-                            default:
-                                System.err.println("Unexpected case: " + state);
+                        // If we draw a 2D shape, apply a fill colour
+                        if (activeModel instanceof ShapeModel2D) {
+                            ((ShapeModel2D) activeModel).setFillColour(fillColourPicker.getColour());
                         }
 
+                        // Set the model colour to the current state of the colour picker
+                        activeModel.setLineColour(lineColourPicker.getColour());
+
+                        // Update the position of the shape.
+                        drawPanel.updateLastShape();
+
+                        // repaint
                         mainFrame.repaint();
                     }
                 });
@@ -545,6 +551,9 @@ public class FridaView implements Observer, ActionListener {
      * as inactive (plain & dark gray).
      * @param button The button to be activated. */
     public void activateButton(JButton button){
+
+        moveMode = button.getText().equals("Move");
+
         for (JButton b : allButtons) {
             // Set button layout to active for the specified button
             if (b.equals(button)) {

@@ -7,4 +7,14 @@ package model;
 public class LineModel extends ShapeModel {
     /** Custom constructor. */
     public LineModel() { }
+
+    @Override
+    public void move() {
+        int xDist = this.moveEnd[0] - this.moveStart[0];
+        int yDist = this.moveEnd[1] - this.moveStart[1];
+        this.startX += xDist;
+        this.endX += xDist;
+        this.startY += yDist;
+        this.endY += yDist;
+    }
 }

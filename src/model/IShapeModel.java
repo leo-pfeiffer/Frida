@@ -36,4 +36,8 @@ public interface IShapeModel extends Serializable {
     /** Get the end coordinates of the shape.
      * @return An array of integers {x, y}, the coordinates of the end point. */
     int[] getEndCoordinates();
+
+    void setMoveStart(int x, int y);
+    void setMoveEnd(int x, int y);
+    void move();
 }

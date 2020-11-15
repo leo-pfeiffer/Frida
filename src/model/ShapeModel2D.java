@@ -67,4 +67,14 @@ public abstract class ShapeModel2D extends ShapeModel {
     public void setLockAspect(boolean lockAspect) {
         this.lockAspect = lockAspect;
     }
+
+    @Override
+    public void move() {
+        int xDist = this.moveEnd[0] - this.moveStart[0];
+        int yDist = this.moveEnd[1] - this.moveStart[1];
+        for (int i = 0; i < xpoints.length; i++) {
+            xpoints[i] += xDist;
+            ypoints[i] += yDist;
+        }
+    }
 }

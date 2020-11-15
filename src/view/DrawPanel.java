@@ -147,6 +147,20 @@ public class DrawPanel extends JPanel {
         }
     }
 
+    public IShapeModel getModelOnPoint (Point point) {
+        final int size = shapes.size() - 1;
+        for (int i = size; i >= 0; i--) {
+            Shape shape = shapes.get(i);
+            if (shape.contains(point)) {
+                IShapeModel model = models.get(i);
+                models.remove(i);
+                shapes.remove(i);
+                return model;
+            }
+        }
+        return null;
+    }
+
     /** Clear all array lists that contain graphics. */
     public void clearAll() {
         // Add them to the undone models and shapes
