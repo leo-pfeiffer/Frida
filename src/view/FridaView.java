@@ -268,42 +268,34 @@ public class FridaView implements Observer, ActionListener {
                 case "Undo" -> {
                     drawPanel.undo();
                     mainFrame.repaint();
-                    System.out.println("Undo...");
                 }
                 case "Redo" -> {
                     drawPanel.redo();
                     mainFrame.repaint();
-                    System.out.println("Redo...");
                 }
                 case "Move" -> {
                     activateButton(b);
                     state = "move";
-                    System.out.println("Move...");
                 }
                 case "Line" -> {
                     activateButton(b);
                     // set active model but don't set up the model yet
                     activeModel = new LineModel();
-                    System.out.println("activeModel is LineModel");
                 }
                 case "Rectangle" -> {
                     activateButton(b);
                     activeModel = new RectangleModel();
-                    System.out.println("activeModel is RectangleModel ...");
                 }
                 case "Parallelogram" -> {
                     activateButton(b);
                     activeModel = new ParallelogramModel();
-                    System.out.println("activeModel is Parallelogram...");
                 }
                 case "Triangle" -> {
                     activateButton(b);
                     activeModel = new TriangleModel();
-                    System.out.println("activeModel is Triangle...");
                 }
                 case "Hexagon" -> {
                     activateButton(b);
-                    System.out.println("Hexagon...");
                 }
                 case "Ellipse" -> {
                     activateButton(b);
@@ -311,12 +303,11 @@ public class FridaView implements Observer, ActionListener {
                 }
                 case "Star" -> {
                     activateButton(b);
-                    System.out.println("Star...");
+                    activeModel = new StarModel();
                 }
                 case "Clear" -> {
                     drawPanel.clearAll();
                     mainFrame.repaint();
-                    System.out.println("Clear...");
                 }
                 case "Line Colour" -> System.out.println("Line Colour...");
                 case "Fill Colour" -> System.out.println("Fill Colour...");
@@ -434,6 +425,12 @@ public class FridaView implements Observer, ActionListener {
         else if (activeModel instanceof ParallelogramModel) {
             activeModel = new ParallelogramModel();
             setupNewModel(new Shape2DController((ParallelogramModel) activeModel));
+        }
+
+        // New star
+        else if (activeModel instanceof StarModel) {
+            activeModel = new StarModel();
+            setupNewModel(new Shape2DController((StarModel) activeModel));
         }
 
     }
