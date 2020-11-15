@@ -296,6 +296,7 @@ public class FridaView implements Observer, ActionListener {
                 }
                 case "Hexagon" -> {
                     activateButton(b);
+                    activeModel = new HexagonModel();
                 }
                 case "Ellipse" -> {
                     activateButton(b);
@@ -431,6 +432,12 @@ public class FridaView implements Observer, ActionListener {
         else if (activeModel instanceof StarModel) {
             activeModel = new StarModel();
             setupNewModel(new Shape2DController((StarModel) activeModel));
+        }
+
+        // New hexagon
+        else if (activeModel instanceof HexagonModel) {
+            activeModel = new HexagonModel();
+            setupNewModel(new Shape2DController((HexagonModel) activeModel));
         }
 
     }

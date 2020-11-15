@@ -7,7 +7,7 @@ public class StarModel extends ShapeModel2D {
     /** Custom constructor. */
     public StarModel() { }
 
-    /** Calculate the corners of the rectangle. */
+    /** Calculate the corners of the star. */
     public void calcCorners() {
         // Calculate radius using Pythagoras
         final int a = endX - startX;
@@ -24,22 +24,11 @@ public class StarModel extends ShapeModel2D {
         final double[] innerDegrees = {Math.toRadians(54), Math.toRadians(126),
                 Math.toRadians(198), Math.toRadians(270), Math.toRadians(342)};
 
-        int[] outerX = new int[outerDegrees.length];
-        int[] outerY = new int[outerDegrees.length];
-
-        int[] innerX = new int[innerDegrees.length];
-        int[] innerY = new int[innerDegrees.length];
-
         int[] xpoints = new int[10];
         int[] ypoints = new int[10];
 
 
         for (int i = 0; i < outerDegrees.length; i++) {
-            // innerX[i] = radius * (int) Math.cos(innerDegrees[i]);
-            // innerY[i] = radius * (int) Math.sin(innerDegrees[i]);
-
-            // outerX[i] = (int) (radius / 3 * Math.cos(outerDegrees[i]));
-            // outerY[i] = (int) (radius / 3 * Math.sin(outerDegrees[i]));
 
             xpoints[2*i] = (int) (radius / 3 * Math.cos(outerDegrees[i]) + midX);
             xpoints[2*i+1] = (int) (radius * Math.cos(innerDegrees[i]) + midX);
