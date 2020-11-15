@@ -120,7 +120,6 @@ public class DrawPanel extends JPanel {
         // Clear the shapes and models
         shapes.clear();
         models.clear();
-
     }
 
     /** Remove last Shape. */

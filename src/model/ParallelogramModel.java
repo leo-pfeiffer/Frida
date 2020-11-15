@@ -23,8 +23,9 @@ public class ParallelogramModel extends ShapeModel2D {
         // Y are always the same
         int[] ypoints = {ymin, ymin, ymax, ymax};
 
-        // If right skew
-        if (startX < endX) {
+        // Top left to bottom right
+        if ((startX < endX & startY < endY)
+                | (startX > endX & startY > endY)) {
             // Put them into arrays
             int[] xpoints = {xmin, xmin + (int) (skew * width),
                     xmax, xmin + (int) ((1 - skew) * width)};
@@ -32,8 +33,9 @@ public class ParallelogramModel extends ShapeModel2D {
             // Set the corners
             setCorners(xpoints, ypoints);
         }
-        // If left skew
-        else {
+        // Top right to bottom left
+        else if ((startX > endX & startY < endY)
+                | (startX < endX & startY > endY)) {
             int[] xpoints = {xmin + (int) ((1 - skew) * width),
                     xmax, xmin + (int) (skew * width), xmin};
 

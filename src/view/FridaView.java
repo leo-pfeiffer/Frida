@@ -49,8 +49,6 @@ public class FridaView implements Observer, ActionListener {
     private JButton redoButton;
     /** Button to activate moving a shape. */
     private JButton moveButton;
-    /** Button to activate free drawing mode. */
-    private JButton drawingButton;
     /** Button to activate line mode. */
     private JButton lineButton;
     /** Button to activate rectangle mode. */
@@ -69,7 +67,7 @@ public class FridaView implements Observer, ActionListener {
     private JButton clearButton;
     /** Button to pick a new line colour. */
     private ColourPicker lineColourPicker;
-    /** Butto to pick a new fill colour */
+    /** Button to pick a new fill colour */
     private ColourPicker fillColourPicker;
 
     /** A list containing all buttons. */
@@ -139,23 +137,19 @@ public class FridaView implements Observer, ActionListener {
 
             @Override
             public void mouseReleased(MouseEvent e) {
-
                 // end a line
                 Point point = e.getPoint();
                 setEnd(point);
                 createNewModel();
                 getCurrentController().setStartCoordinates(start[0], start[1]);
                 getCurrentController().setEndCoordinates(end[0], end[1]);
-                // getCurrentController().setEndCoordinates((int) point.getX(), (int) point.getY());
             }
 
             @Override
             public void mousePressed(MouseEvent e) {
-
                 // start a line
                 Point point = e.getPoint();
                 setStart(point);
-                // getCurrentController().setStartCoordinates((int) point.getX(), (int) point.getY());
             }
 
             @Override
@@ -224,9 +218,6 @@ public class FridaView implements Observer, ActionListener {
         moveButton = new JButton("Move");
         allButtons.add(moveButton);
 
-        drawingButton = new JButton("Draw");
-        allButtons.add(drawingButton);
-
         lineButton = new JButton("Line");
         allButtons.add(lineButton);
 
@@ -289,12 +280,6 @@ public class FridaView implements Observer, ActionListener {
                     state = "move";
                     System.out.println("Move...");
                 }
-
-                case "Draw" -> {
-                    activateButton(b);
-                    System.out.println("Draw...");
-                }
-
                 case "Line" -> {
                     activateButton(b);
                     // set active model but don't set up the model yet
