@@ -85,12 +85,6 @@ public class FridaView implements Observer, ActionListener {
     /** Construct a new object by setting up the components. */
     public FridaView() {
 
-        // Initially, we use the line model
-        activeModel = new LineModel();
-
-        // add observer, add model to models, add controller to controllers
-        setupNewModel(new ShapeController((LineModel) activeModel));
-
         // Create the main frame for the view
         mainFrame = new JFrame("Frida");
         mainFrame.setDefaultCloseOperation(JFrame.EXIT_ON_CLOSE);
@@ -106,6 +100,12 @@ public class FridaView implements Observer, ActionListener {
 
         // Setup the components
         this.setupComponents();
+
+        // Initially, we use the line model
+        activeModel = new LineModel();
+
+        // add observer, add model to models, add controller to controllers
+        setupNewModel(new ShapeController((LineModel) activeModel));
 
         // Paint and pack the main frame and its components
         mainFrame.paintAll(mainFrame.getGraphics());
@@ -140,8 +140,6 @@ public class FridaView implements Observer, ActionListener {
                 // end a line
                 Point point = e.getPoint();
                 setEnd(point);
-                createNewModel();
-                getCurrentController().setStartCoordinates(start[0], start[1]);
                 getCurrentController().setEndCoordinates(end[0], end[1]);
             }
 
@@ -150,6 +148,8 @@ public class FridaView implements Observer, ActionListener {
                 // start a line
                 Point point = e.getPoint();
                 setStart(point);
+                createNewModel();
+                getCurrentController().setStartCoordinates(start[0], start[1]);
             }
 
             @Override
@@ -163,7 +163,9 @@ public class FridaView implements Observer, ActionListener {
         this.drawPanel.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
-                // todo
+                Point point = e.getPoint();
+                setEnd(point);
+                getCurrentController().setEndCoordinates(end[0], end[1]);
             }
 
             @Override
@@ -336,6 +338,9 @@ public class FridaView implements Observer, ActionListener {
         // add controller
         controllers.add(controller);
 
+        // add to draw panel
+        drawPanel.addModel(activeModel);
+
         // Set state to draw
         state = "draw";
     }
@@ -357,7 +362,8 @@ public class FridaView implements Observer, ActionListener {
                                 }
                                 // Set the model colour to the current state of the colour picker
                                 activeModel.setLineColour(lineColourPicker.getColour());
-                                drawPanel.addModel(activeModel);
+                                // Update the position of the shape.
+                                drawPanel.updateLastShape();
                                 break;
 
                             case "move":

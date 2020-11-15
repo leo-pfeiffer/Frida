@@ -65,15 +65,41 @@ public class DrawPanel extends JPanel {
         }
     }
 
+    public void updateLastShape() {
+        IShapeModel m = getLastModel(models);
+        Shape s = getLastShape(shapes);
+
+        if (m instanceof LineModel) {
+            int[] start = m.getStartCoordinates();
+            int[] end = m.getEndCoordinates();
+            ((Line2D) s).setLine(start[0], start[1], end[0], end[1]);
+        }
+
+        else if (m instanceof EllipseModel) {
+            int[] pos = ((EllipseModel) m).getPosition();
+            ((Ellipse2D) s).setFrame(pos[0], pos[1], pos[2], pos[3]);
+        }
+
+        else if (m instanceof ShapeModel2D){
+            int[] xpoints = ((ShapeModel2D) m).getXpoints();
+            int[] ypoints = ((ShapeModel2D) m).getYpoints();
+
+            // For some reason Polygon is public so we can directly set
+            // the new positional data
+            ((Polygon) s).npoints = xpoints.length;
+            ((Polygon) s).xpoints = xpoints;
+            ((Polygon) s).ypoints = ypoints;
+        }
+    }
+
     /** Add a new line to the panel.
      * @param model The line model the line is based on.
      * */
     public void addLine(LineModel model) {
-        int x1 = model.getStartCoordinates()[0];
-        int y1 = model.getStartCoordinates()[1];
-        int x2 = model.getEndCoordinates()[0];
-        int y2 = model.getEndCoordinates()[1];
-        Line2D line = new Line2D.Double(x1, y1, x2, y2);
+        int[] start = model.getStartCoordinates();
+        int[] end = model.getEndCoordinates();
+
+        Line2D line = new Line2D.Double(start[0], start[1], end[0], end[1]);
         shapes.add(line);
     }
 
@@ -95,19 +121,8 @@ public class DrawPanel extends JPanel {
      * */
     public void addPolygon(ShapeModel2D model) {
 
-        // Get the corners of the polygon
-        int[][] corners = model.getCorners();
-        final int numCorners = corners.length;
-
-        // Create arrays for x and y coordinates of the corners
-        int[] xpoints = new int[numCorners];
-        int[] ypoints = new int[numCorners];
-
-        // Extract x and y coordinates of the corners
-        for (int i = 0; i < numCorners; i++) {
-            xpoints[i] = corners[i][0];
-            ypoints[i] = corners[i][1];
-        }
+        int[] xpoints = model.getXpoints();
+        int[] ypoints = model.getYpoints();
 
         // Create the polygon
         Polygon rectangle = new Polygon(xpoints, ypoints, xpoints.length);

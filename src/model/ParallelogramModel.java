@@ -22,32 +22,27 @@ public class ParallelogramModel extends ShapeModel2D {
 
         // Y are always the same
         int[] ypoints = {ymin, ymin, ymax, ymax};
+        this.ypoints = ypoints;
 
         // Top left to bottom right
-        if ((startX < endX & startY < endY)
-                | (startX > endX & startY > endY)) {
+        if ((startX <= endX & startY <= endY)
+                | (startX >= endX & startY >= endY)) {
             // Put them into arrays
             int[] xpoints = {xmin, xmin + (int) (skew * width),
                     xmax, xmin + (int) ((1 - skew) * width)};
-
             this.xpoints = xpoints;
-            this.ypoints = ypoints;
 
-            // Set the corners
-            setCorners();
         }
+
         // Top right to bottom left
-        else if ((startX > endX & startY < endY)
-                | (startX < endX & startY > endY)) {
+        else {
             int[] xpoints = {xmin + (int) ((1 - skew) * width),
                     xmax, xmin + (int) (skew * width), xmin};
-
             this.xpoints = xpoints;
-            this.ypoints = ypoints;
-
-            // Set the corners
-            setCorners();
         }
+
+        // Set the corners
+        setCorners();
     }
 
     /**  {@inheritDoc} */
