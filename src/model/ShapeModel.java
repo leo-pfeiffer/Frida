@@ -25,6 +25,8 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
 
     protected boolean lockAspect;
 
+    private int strokeSize;
+
     /** Custom constructor. */
     public ShapeModel() {}
 
@@ -80,6 +82,13 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
     public void setMoveEnd(int x, int y) {
         this.moveEnd = new int[] {x, y};
     }
+
+    @Override
+    public void setStrokeSize(int size) {
+        this.strokeSize = size;
+    }
+
+    public int getStrokeSize() { return this.strokeSize; }
 
     @Override
     public void move() {

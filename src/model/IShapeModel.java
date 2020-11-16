@@ -40,4 +40,7 @@ public interface IShapeModel extends Serializable {
     void setMoveStart(int x, int y);
     void setMoveEnd(int x, int y);
     void move();
+
+    void setStrokeSize(int size);
+    int getStrokeSize();
 }

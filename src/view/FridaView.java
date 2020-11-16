@@ -67,6 +67,8 @@ public class FridaView implements Observer, ActionListener {
     /** Button to pick a new fill colour */
     private ColourPicker fillColourPicker;
 
+    private StrokeStyler strokeStyler;
+
     /** A list containing all buttons. */
     private ArrayList<JButton> allButtons = new ArrayList<>();
 
@@ -324,6 +326,9 @@ public class FridaView implements Observer, ActionListener {
     public void setupToolbox() {
 
         // Create the components
+        strokeStyler = new StrokeStyler("Stroke Style");
+        allButtons.add(strokeStyler);
+
         lineColourPicker = new ColourPicker("Line Colour", Color.BLACK);
         allButtons.add(lineColourPicker);
 
@@ -357,6 +362,10 @@ public class FridaView implements Observer, ActionListener {
         for (JButton b : allButtons) {
             // add ActionListeners
             addActionListenerToButton(b);
+
+            if (!(b instanceof StrokeStyler)) {
+                b.setMargin(new Insets(7, 4, 7, 4));
+            }
 
             // Add buttons to toolbox
             toolbox.add(b);
@@ -545,11 +554,14 @@ public class FridaView implements Observer, ActionListener {
 
                         // If we draw a 2D shape, apply a fill colour
                         if (activeModel instanceof ShapeModel2D) {
-                            ((ShapeModel2D) activeModel).setFillColour(fillColourPicker.getColour());
+                            // ((ShapeModel2D) activeModel).setFillColour(fillColourPicker.getColour());
+                            ((Shape2DController) getCurrentController()).setFillColour(fillColourPicker.getColour());
                         }
 
                         // Set the model colour to the current state of the colour picker
-                        activeModel.setLineColour(lineColourPicker.getColour());
+                        // activeModel.setLineColour(lineColourPicker.getColour());
+                        getCurrentController().setLineColour(lineColourPicker.getColour());
+                        getCurrentController().setStrokeSize(strokeStyler.getStrokeSize());
 
                         // Update the position of the shape.
                         drawPanel.updateLastShape();

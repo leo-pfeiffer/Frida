@@ -35,12 +35,11 @@ public class DrawPanel extends JPanel {
         Graphics2D g2d = (Graphics2D) g;
 
         for (int i=0; i < shapes.size(); i++) {
-            // Get the shape and colour that go together
+            // Get the shape and model that go together
             Shape shape = shapes.get(i);
             IShapeModel model = models.get(i);
 
-            // todo let the user set the stroke
-            g2d.setStroke(new BasicStroke(2));
+            g2d.setStroke(new BasicStroke(model.getStrokeSize()));
             g2d.setColor(model.getLineColour());
             g2d.draw(shape);
 

@@ -53,4 +53,6 @@ public class Shape2DController implements IShapeController{
         model.move();
     }
 
+    @Override
+    public void setStrokeSize(int size) { model.setStrokeSize(size);}
 }
