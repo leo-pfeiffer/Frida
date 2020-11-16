@@ -1,8 +1,8 @@
 package view;
 
-import java.awt.Color;
-import javax.swing.JButton;
-import javax.swing.JColorChooser;
+import java.awt.*;
+import java.awt.image.BufferedImage;
+import javax.swing.*;
 
 /** Extend JButton to create a button that opens
  * a colour picker in a new dialog window.
@@ -15,11 +15,12 @@ public class ColourPicker extends JButton {
     /** Custom constructor.
      * @param text The button label.
      * @param colour The default colour.*/
-    // todo Make the current colour visible next to the button. Else just do this regular
     public ColourPicker(String text, Color colour) {
 
         // set the button text
         this.setText(text);
+
+        setupIcon(colour);
 
         // set default colour
         this.colour = colour;
@@ -28,6 +29,7 @@ public class ColourPicker extends JButton {
         addActionListener(e -> {
             Color pickedColour = JColorChooser.showDialog(null, text, colour);
             setColour(pickedColour);
+            setupIcon(pickedColour);
         });
     }
 
@@ -41,5 +43,16 @@ public class ColourPicker extends JButton {
      * @return The currently active colour. */
     public Color getColour() {
         return this.colour;
+    }
+
+    public void setupIcon(Color colour) {
+        // add icon
+        BufferedImage iconImage = new BufferedImage(10, 10, BufferedImage.TYPE_INT_RGB);
+        Graphics2D graphics = iconImage.createGraphics();
+
+        graphics.setPaint(colour);
+        graphics.fillRect(0, 0, iconImage.getWidth(), iconImage.getHeight());
+
+        this.setIcon(new ImageIcon(iconImage));
     }
 }
