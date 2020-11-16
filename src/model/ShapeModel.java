@@ -80,4 +80,15 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
     public void setMoveEnd(int x, int y) {
         this.moveEnd = new int[] {x, y};
     }
+
+    @Override
+    public void move() {
+        int xDist = this.moveEnd[0] - this.moveStart[0];
+        int yDist = this.moveEnd[1] - this.moveStart[1];
+        this.startX += xDist;
+        this.endX += xDist;
+        this.startY += yDist;
+        this.endY += yDist;
+        update();
+    }
 }

@@ -436,9 +436,15 @@ public class FridaView implements Observer, ActionListener {
                     }
                     getCurrentController().setEndCoordinates(end[0], end[1]);
                 }
-                /* todo:
-                 *   - get the controller of the newly activeModel
-                 *   - call setMoveEnd on that controller */
+
+                else {
+                    if (moving) {
+                        getCurrentController().setMoveEnd((int) point.getX(), (int) point.getY());
+                        getCurrentController().move();
+                        getCurrentController().setMoveStart((int) point.getX(), (int) point.getY());
+                        moving = false;
+                    }
+                }
             }
 
             @Override
@@ -451,19 +457,29 @@ public class FridaView implements Observer, ActionListener {
                     createNewModel();
                     getCurrentController().setStartCoordinates(start[0], start[1]);
                 }
-                /* todo:
-                *   - get the controller of the newly activeModel
-                *   - call setMoveStart on that controller
-                *   - also handle the order of models and controllers */
-                // else {
-                    // moving = false;
-                    // IShapeModel modelOnPoint = drawPanel.getModelOnPoint(point);
-                    // if (modelOnPoint != null) {
-                        // activeModel = modelOnPoint;
-                        // moving = true;
 
-                   // }
-                // }
+                else {
+                    moving = false;
+                    IShapeModel modelOnPoint = drawPanel.getModelOnPoint(point);
+                    if (modelOnPoint != null) {
+                        activeModel = modelOnPoint;
+                        moving = true;
+
+                        // Get index of model in the models array list
+                        int ind = models.indexOf(activeModel);
+
+                        // Move model and controller at end of array list
+                        models.add(activeModel);
+                        models.remove(ind);
+                        controllers.add(controllers.get(ind));
+                        controllers.remove(ind);
+
+                        drawPanel.addModel(activeModel);
+
+                        // Get controller
+                        getCurrentController().setMoveStart((int) point.getX(), (int) point.getY());
+                    }
+                }
             }
 
             @Override
@@ -487,9 +503,13 @@ public class FridaView implements Observer, ActionListener {
                     getCurrentController().setEndCoordinates(end[0], end[1]);
                 }
 
-                /* todo:
-                 *   - get the controller of the newly activeModel
-                 *   - call setMoveEnd on that controller */
+                else {
+                    if (moving) {
+                        getCurrentController().setMoveEnd((int) point.getX(), (int) point.getY());
+                        getCurrentController().move();
+                        getCurrentController().setMoveStart((int) point.getX(), (int) point.getY());
+                    }
+                }
             }
 
             @Override

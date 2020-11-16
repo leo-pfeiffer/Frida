@@ -38,12 +38,4 @@ public class EllipseModel extends ShapeModel {
         int[] position = {this.x, this.y, this.w, this.h};
         return position;
     }
-
-    @Override
-    public void move() {
-        int xDist = this.moveEnd[0] - this.moveStart[0];
-        int yDist = this.moveEnd[1] - this.moveStart[1];
-        this.x += xDist;
-        this.y += yDist;
-    }
 }

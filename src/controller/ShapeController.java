@@ -41,4 +41,9 @@ public class ShapeController implements IShapeController {
     public void setMoveEnd(int x, int y) {
         model.setMoveEnd(x, y);
     }
+
+    @Override
+    public void move() {
+        model.move();
+    }
 }

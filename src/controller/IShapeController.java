@@ -10,5 +10,6 @@ public interface IShapeController {
     void setLockAspect(boolean lockAspect);
     void setMoveStart(int x, int y);
     void setMoveEnd(int x, int y);
+    void move();
 
 }
