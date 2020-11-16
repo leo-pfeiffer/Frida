@@ -298,11 +298,9 @@ public class FridaView implements Observer, ActionListener {
         JMenu edit = new JMenu ("Edit");
         JMenuItem undo = new JMenuItem ("Undo");
         JMenuItem redo = new JMenuItem ("Redo");
-        JMenuItem move = new JMenuItem ("Move");
         JMenuItem clear = new JMenuItem ("Clear");
         edit.add (undo);
         edit.add (redo);
-        edit.add (move);
         edit.add (clear);
         fileMenu.add (edit);
 
@@ -312,11 +310,6 @@ public class FridaView implements Observer, ActionListener {
 
         redo.addActionListener(e -> {
             redoAction.actionPerformed(e);
-        });
-
-        move.addActionListener(e -> {
-            // todo call appropriate method in model
-            JOptionPane.showMessageDialog(mainFrame, "Move not linked to model!");
         });
 
         clear.addActionListener(e -> {
