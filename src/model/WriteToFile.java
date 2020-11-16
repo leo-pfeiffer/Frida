@@ -8,7 +8,7 @@ import java.util.ArrayList;
 public abstract class WriteToFile {
 
     public static void write(ArrayList<IShapeModel> models, String filename) {
-        String fullName = filename + ".frida";
+        String fullName = filename;
 
         try {
             FileOutputStream fos = new FileOutputStream(fullName);
