@@ -150,7 +150,18 @@ public class DrawPanel extends JPanel {
         final int size = shapes.size() - 1;
         for (int i = size; i >= 0; i--) {
             Shape shape = shapes.get(i);
-            if (shape.contains(point)) {
+
+            boolean isLine = false;
+
+            if (shape instanceof Line2D) {
+
+                // If click is within a 2 x 2 square of the line, accept.
+                if (!shape.intersects((int) point.getX() - 1, (int) point.getY() - 1, 2, 2)) continue;
+
+                isLine = true;
+            }
+
+            if (shape.contains(point) | isLine) {
                 IShapeModel model = models.get(i);
                 models.remove(i);
                 shapes.remove(i);
