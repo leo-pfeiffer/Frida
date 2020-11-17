@@ -18,7 +18,6 @@ public class EllipseModelTest {
 
     @Test
     public void testStartCoordinates() {
-        System.out.println("Testing start coordinates");
         assertArrayEquals(new int[]{0, 0}, ellipse.getStartCoordinates());
         int x = 42;
         int y = 7;
@@ -28,7 +27,6 @@ public class EllipseModelTest {
 
     @Test
     public void testEndCoordinates() {
-        System.out.println("Testing end coordinates");
         assertArrayEquals(new int[]{0, 0}, ellipse.getEndCoordinates());
         int x = 21;
         int y = 3;
@@ -38,7 +36,6 @@ public class EllipseModelTest {
 
     @Test
     public void testLineColour() {
-        System.out.println("Testing ellipse colour");
         assertNull(ellipse.getLineColour());
         Color colour = Color.PINK;
         ellipse.setLineColour(colour);
@@ -47,7 +44,6 @@ public class EllipseModelTest {
 
     @Test
     public void testStrokeSize() {
-        System.out.println("Testing stroke size");
         assertEquals(0, ellipse.getStrokeSize());
         int size = 3;
         ellipse.setStrokeSize(size);
