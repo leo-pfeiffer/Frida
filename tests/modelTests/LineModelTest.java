@@ -4,7 +4,6 @@ import model.LineModel;
 import org.junit.*;
 
 import java.awt.Color;
-import java.util.Observable;
 
 import static org.junit.Assert.*;
 

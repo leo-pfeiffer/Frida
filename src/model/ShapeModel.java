@@ -73,6 +73,10 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
         this.lockAspect = lockAspect;
     }
 
+    public boolean getLockAspect() {
+        return this.lockAspect;
+    }
+
     @Override
     public void setMoveStart(int x, int y) {
         this.moveStart = new int[] {x, y};
