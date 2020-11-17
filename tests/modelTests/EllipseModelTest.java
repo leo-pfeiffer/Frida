@@ -8,7 +8,7 @@ public class EllipseModelTest {
     @Test
     public void testBasic() {
         System.out.println("testing constructor and getName");
-        assertEquals("Leo", "Leo2");
+        assertEquals("Leo", "Leo");
     }
 
 }

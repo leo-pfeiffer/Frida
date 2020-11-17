@@ -83,6 +83,14 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
         this.moveEnd = new int[] {x, y};
     }
 
+    public int[] getMoveStart() {
+        return this.moveStart;
+    }
+
+    public int[] getMoveEnd() {
+        return this.moveEnd;
+    }
+
     @Override
     public void setStrokeSize(int size) {
         this.strokeSize = size;
