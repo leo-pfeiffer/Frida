@@ -1,6 +1,10 @@
 package model;
 
+import javax.annotation.processing.SupportedSourceVersion;
 import java.awt.Color;
+import java.sql.Array;
+import java.util.ArrayList;
+import java.util.Arrays;
 
 /** Abstract class for all two dimensional models. The class extends its parent class
  * by adding a field that denotes the fill colour of the model and corresponding
@@ -38,6 +42,9 @@ public abstract class ShapeModel2D extends ShapeModel {
     /** Getter method for the corners.
      * @return the corners as a 2d integer array. */
     public int[][] getCorners() {
+        for (int[] arr : this.corners) {
+            System.out.println(Arrays.toString(arr));
+        }
         return this.corners;
     }
 
