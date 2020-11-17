@@ -123,12 +123,26 @@ public class ParallelogramModelTest {
         assertArrayEquals(expectedX1, para.getXpoints());
         assertArrayEquals(expectedY1, para.getYpoints());
 
+        // bottom right to bottom left
+        para.setStartCoordinates(15, 20);
+        para.setEndCoordinates(5,10);
+
+        assertArrayEquals(expectedX1, para.getXpoints());
+        assertArrayEquals(expectedY1, para.getYpoints());
+
         // top right to bottom left
         para.setStartCoordinates(15,10);
         para.setEndCoordinates(5, 20);
 
         int[] expectedX2 = {5 + (int) ((1 - 0.67f) * 10), 15, 5 + (int) (0.67f * 10), 5};
         int[] expectedY2 = {10, 10, 20, 20};
+
+        assertArrayEquals(expectedX2, para.getXpoints());
+        assertArrayEquals(expectedY2, para.getYpoints());
+
+        // bottom left to top right
+        para.setStartCoordinates(5, 20);
+        para.setEndCoordinates(15,10);
 
         assertArrayEquals(expectedX2, para.getXpoints());
         assertArrayEquals(expectedY2, para.getYpoints());
