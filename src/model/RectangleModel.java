@@ -48,14 +48,14 @@ public class RectangleModel extends ShapeModel2D {
     @Override
     public int[] getXpoints() {
         calcPosition();
-        return xpoints;
+        return super.getXpoints();
     }
 
     /**  {@inheritDoc} */
     @Override
     public int[] getYpoints() {
         calcPosition();
-        return ypoints;
+        return super.getYpoints();
     }
 
 }
