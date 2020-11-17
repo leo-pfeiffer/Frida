@@ -7,7 +7,7 @@ import org.junit.runners.Suite;
 @Suite.SuiteClasses(
         {EllipseModelTest.class, LineModelTest.class,
         RectangleModelTest.class, ParallelogramModelTest.class,
-        })
+        HexagonModelTest.class, })
 public class ModelTestSuite {
     // nothing
 }

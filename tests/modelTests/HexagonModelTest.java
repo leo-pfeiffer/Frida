@@ -1,0 +1,160 @@
+package modelTests;
+
+import model.HexagonModel;
+import model.ParallelogramModel;
+import org.junit.Before;
+import org.junit.Test;
+
+import java.awt.*;
+
+import static org.junit.Assert.*;
+import static org.junit.Assert.assertArrayEquals;
+
+public class HexagonModelTest {
+
+    private HexagonModel hex;
+
+    @Before
+    public void setup() {
+        this.hex = new HexagonModel();
+    }
+
+    @Test
+    public void testStartCoordinates() {
+        assertArrayEquals(new int[]{0, 0}, hex.getStartCoordinates());
+        int x = 42;
+        int y = 7;
+        hex.setStartCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, hex.getStartCoordinates());
+    }
+
+    @Test
+    public void testEndCoordinates() {
+        assertArrayEquals(new int[]{0, 0}, hex.getEndCoordinates());
+        int x = 21;
+        int y = 3;
+        hex.setEndCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, hex.getEndCoordinates());
+    }
+
+    @Test
+    public void testLineColour() {
+        assertNull(hex.getLineColour());
+        Color colour = Color.PINK;
+        hex.setLineColour(colour);
+        assertEquals(colour, hex.getLineColour());
+    }
+
+    @Test
+    public void testFillColour() {
+        assertNull(hex.getFillColour());
+        Color colour = Color.RED;
+        hex.setFillColour(colour);
+        assertEquals(colour, hex.getFillColour());
+    }
+
+    @Test
+    public void testStrokeSize() {
+        assertEquals(0, hex.getStrokeSize());
+        int size = 3;
+        hex.setStrokeSize(size);
+        assertEquals(size, hex.getStrokeSize());
+    }
+
+    @Test
+    public void testMove() {
+        // Initial values should be null
+        assertNull(hex.getMoveStart());
+        assertNull(hex.getMoveEnd());
+
+        // from (0, 0) to (10, 10)
+        hex.setStartCoordinates(0, 0);
+        hex.setEndCoordinates(10, 10);
+
+        // Define coordinates of the move
+        // Move 30 - 5 to the right and 40 - 5 up
+        int startX = 5;
+        int startY = 5;
+        int endX = 30;
+        int endY = 40;
+
+        // Set the coordinates in the class
+        hex.setMoveStart(startX, startY);
+        hex.setMoveEnd(endX, endY);
+
+        // Move coordinates should have changed
+        assertArrayEquals(new int[]{startX, startY}, hex.getMoveStart());
+        assertArrayEquals(new int[]{endX, endY}, hex.getMoveEnd());
+
+        // Start and end coordinates shouldn't have changed
+        assertArrayEquals(new int[]{0, 0}, hex.getStartCoordinates());
+        assertArrayEquals(new int[]{10, 10}, hex.getEndCoordinates());
+
+        // Now move
+        hex.move();
+
+        // Position should have moved
+        assertArrayEquals(new int[]{25, 35}, hex.getStartCoordinates());
+        assertArrayEquals(new int[]{35, 45}, hex.getEndCoordinates());
+    }
+
+    @Test
+    public void testUpdate() {
+        // update() calls setChanged which sets changed to true.
+        // Then it calls notifyObservers, which sets changed back to false.
+        // Therefore, calling update should not change the value returned by hasChanged().
+        assertFalse(hex.hasChanged());
+        hex.update();
+        assertFalse(hex.hasChanged());
+    }
+
+    @Test
+    public void testPoints() {
+
+        // set points s.t. mid point is at (100, 100)
+        hex.setStartCoordinates(50,50);
+        hex.setEndCoordinates(150, 150);
+
+        // Expected x and y coordinates of the hexagon.
+        double[] expectedX = {171, 135, 65, 29, 64, 135};
+        double[] expectedY = {100, 39, 39, 100, 161, 161};
+
+        int[] resultXint = hex.getXpoints();
+        int[] resultYint = hex.getYpoints();
+
+        double[] resultX = new double[expectedX.length];
+        double[] resultY = new double[expectedX.length];
+
+        for (int i = 0; i < expectedX.length; i++) { resultX[i] = resultXint[i]; }
+        for (int i = 0; i < expectedX.length; i++) { resultY[i] = resultYint[i]; }
+
+        // Allow for difference of 2 due to rounding error in the calculation
+        assertArrayEquals(expectedX, resultX, 2);
+        assertArrayEquals(expectedY, resultY, 2);
+    }
+
+    @Test
+    public void testCorners() {
+        int[][] initial = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};
+        assertArrayEquals(initial, hex.getCorners());
+
+        hex.setStartCoordinates(50,50);
+        hex.setEndCoordinates(150, 150);
+
+        double[][] expectedX = {
+                {171, 100}, {135, 39}, {65, 39},
+                {29, 100}, {64, 161}, {135, 161}
+        };
+
+        int[][] resultInt = hex.getCorners();
+
+        for (int i = 0; i < expectedX.length; i++) {
+            for (int j = 1; j < 2; j++) {
+                assertEquals(expectedX[i][j], resultInt[i][j], 2);
+            }
+        }
+
+
+    }
+
+}
