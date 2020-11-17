@@ -153,8 +153,6 @@ public class HexagonModelTest {
                 assertEquals(expectedX[i][j], resultInt[i][j], 2);
             }
         }
-
-
     }
 
 }
