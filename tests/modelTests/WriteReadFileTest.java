@@ -9,11 +9,9 @@ import org.junit.AfterClass;
 import org.junit.Before;
 import org.junit.Test;
 
-import java.awt.*;
+import java.awt.Color;
 import java.io.File;
 import java.io.IOException;
-import java.io.Serial;
-import java.io.Serializable;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
