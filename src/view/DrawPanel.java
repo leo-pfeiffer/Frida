@@ -74,6 +74,11 @@ public class DrawPanel extends JPanel {
                 g2d.setPaint(((ShapeModel2D) model).getFillColour());
                 g2d.fill(shape);
             }
+            // Same for ellipse
+            else if (model instanceof EllipseModel) {
+                g2d.setPaint(((EllipseModel) model).getFillColour());
+                g2d.fill(shape);
+            }
         }
     }
 

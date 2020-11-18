@@ -4,6 +4,7 @@ package view;
 import controller.IShapeController;
 import controller.ShapeController;
 import controller.Shape2DController;
+import controller.EllipseController;
 
 // models
 import model.EllipseModel;
@@ -649,11 +650,16 @@ public class FridaView implements Observer {
     public void update(Observable o, Object arg) {
         SwingUtilities.invokeLater(() -> {
 
+            // Don't update colour while we're in move mode
             if (!moveMode) {
                 // If we draw a 2D shape, apply a fill colour
                 if (activeModel instanceof ShapeModel2D) {
                     // ((ShapeModel2D) activeModel).setFillColour(fillColourPicker.getColour());
                     ((Shape2DController) getCurrentController()).setFillColour(fillColourPicker.getColour());
+                }
+                // Same for ellipse
+                else if (activeModel instanceof EllipseModel) {
+                    ((EllipseController) getCurrentController()).setFillColour(fillColourPicker.getColour());
                 }
 
                 // Set the model colour to the current state of the colour picker
@@ -798,7 +804,7 @@ public class FridaView implements Observer {
         // New ellipse
         if (activeModel instanceof EllipseModel) {
             activeModel = new EllipseModel();
-            setupNewModel(new ShapeController((EllipseModel) activeModel));
+            setupNewModel(new EllipseController((EllipseModel) activeModel));
         }
     }
 
