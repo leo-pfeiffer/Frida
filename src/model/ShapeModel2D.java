@@ -2,9 +2,7 @@ package model;
 
 import java.awt.Color;
 
-/** Abstract class for all two dimensional models. The class extends its parent class
- * by adding a field that denotes the fill colour of the model and corresponding
- * getter and setter methods.
+/** Abstract class for more complex two dimensional models that are not based on a single line.
  * @author 190026921 */
 public abstract class ShapeModel2D extends ShapeModel {
 
@@ -41,7 +39,8 @@ public abstract class ShapeModel2D extends ShapeModel {
         return this.corners;
     }
 
-    /** Set the corners. Only called from inheriting classes.
+    /** Set the corners based on the x and y coordinates of the corners.
+     * This method is only called from inheriting classes.
      * For outside access, call getXpoints and getYpoints instead. */
     protected void setCorners() {
         
@@ -54,12 +53,15 @@ public abstract class ShapeModel2D extends ShapeModel {
         }
     }
 
+    /** Get the x coordinates of the corner points of the shape model.
+     * @return X coordinates */
     public int[] getXpoints() {
         return xpoints;
     }
 
+    /** Get the y coordinates of the corner points of the shape model.
+     * @return Y coordinates */
     public int[] getYpoints() {
         return ypoints;
     }
-
 }

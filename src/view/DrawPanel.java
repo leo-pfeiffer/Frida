@@ -1,15 +1,28 @@
 package view;
 
-import model.*;
+import model.EllipseModel;
+import model.IShapeModel;
+import model.LineModel;
+import model.ReadFromFile;
+import model.ShapeModel2D;
+import model.WriteToFile;
 
-import java.awt.*;
+import java.awt.BasicStroke;
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.awt.Polygon;
+import java.awt.Shape;
 import java.awt.geom.Ellipse2D;
 import java.io.IOException;
 import java.util.ArrayList;
 
 import java.awt.geom.Line2D;
-import javax.swing.*;
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
+/** Panel the user can draw on.
+ * @author 190026921 */
 public class DrawPanel extends JPanel {
 
     /** Contains all shapes that are currently painted. */
@@ -22,23 +35,33 @@ public class DrawPanel extends JPanel {
     /** Contains undone models. */
     private ArrayList<IShapeModel> undoneModels;
 
-
+    /** Custom constructor. */
     public DrawPanel() {
+        // set up the shapes and undone shapes
         shapes = new ArrayList<>();
         undoneShapes = new ArrayList<>();
 
+        // set up the models and undone model
         models = new ArrayList<>();
         undoneModels = new ArrayList<>();
     }
 
+    /** Overrides the paintComponent method of JComponent.
+     * Paints all shapes to the panel. */
+    @Override
     public void paintComponent(Graphics g) {
+
+        // Create new g2d graphic
         Graphics2D g2d = (Graphics2D) g;
 
+        // Iterate through all shapes
         for (int i=0; i < shapes.size(); i++) {
+
             // Get the shape and model that go together
             Shape shape = shapes.get(i);
             IShapeModel model = models.get(i);
 
+            // Set the stroke, color and draw the shape
             g2d.setStroke(new BasicStroke(model.getStrokeSize()));
             g2d.setColor(model.getLineColour());
             g2d.draw(shape);
@@ -51,55 +74,72 @@ public class DrawPanel extends JPanel {
         }
     }
 
+    /** Add a new model to the models array list. Also call the corresponding method to add the
+     * shape to the shapes array list.
+     * @param model The model to add. */
     public void addModel(IShapeModel model) {
         models.add(model);
         addShapeFromModel(model);
     }
 
+    /** Add the shape from a model.
+     * @param model the model the shape is based on. */
     public void addShapeFromModel(IShapeModel model) {
+
+        // Handle line models
         if (model instanceof LineModel) {
             addLine((LineModel) model);
-        } else if(model instanceof EllipseModel) {
+        }
+        // Handle ellipse model
+        else if(model instanceof EllipseModel) {
             addEllipse((EllipseModel) model);
-        } else if (model instanceof ShapeModel2D){
+        }
+        // Handle any ShapeModel2D type model that's based on java.awt.Polygon
+        else if (model instanceof ShapeModel2D){
             addPolygon((ShapeModel2D) model);
         }
     }
 
+    /** Update the position of the most current shape. */
     public void updateLastShape() {
-        IShapeModel m = getLastModel(models);
-        Shape s = getLastShape(shapes);
 
-        if (m instanceof LineModel) {
-            int[] start = m.getStartCoordinates();
-            int[] end = m.getEndCoordinates();
-            ((Line2D) s).setLine(start[0], start[1], end[0], end[1]);
+        // Get the last model and shape
+        IShapeModel model = getLastModel(models);
+        Shape shape = getLastShape(shapes);
+
+        // Handle line model
+        if (model instanceof LineModel) {
+            int[] start = model.getStartCoordinates();
+            int[] end = model.getEndCoordinates();
+            ((Line2D) shape).setLine(start[0], start[1], end[0], end[1]);
         }
 
-        else if (m instanceof EllipseModel) {
-            int[] pos = ((EllipseModel) m).getPosition();
-            ((Ellipse2D) s).setFrame(pos[0], pos[1], pos[2], pos[3]);
+        // Handle ellipse
+        else if (model instanceof EllipseModel) {
+            int[] pos = ((EllipseModel) model).getPosition();
+            ((Ellipse2D) shape).setFrame(pos[0], pos[1], pos[2], pos[3]);
         }
 
-        else if (m instanceof ShapeModel2D){
-            int[] xpoints = ((ShapeModel2D) m).getXpoints();
-            int[] ypoints = ((ShapeModel2D) m).getYpoints();
+        // Handle models that are drawn by java.awt.Polygon
+        else if (model instanceof ShapeModel2D){
+            int[] xpoints = ((ShapeModel2D) model).getXpoints();
+            int[] ypoints = ((ShapeModel2D) model).getYpoints();
 
-            // For some reason Polygon is public so we can directly set
-            // the new positional data
-            ((Polygon) s).npoints = xpoints.length;
-            ((Polygon) s).xpoints = xpoints;
-            ((Polygon) s).ypoints = ypoints;
+            // For some reason Polygon is public so we can directly set the new positional data directly
+            ((Polygon) shape).npoints = xpoints.length;
+            ((Polygon) shape).xpoints = xpoints;
+            ((Polygon) shape).ypoints = ypoints;
         }
     }
 
     /** Add a new line to the panel.
-     * @param model The line model the line is based on.
-     * */
+     * @param model The line model the line is based on. */
     public void addLine(LineModel model) {
+        // get the start and end coordinates
         int[] start = model.getStartCoordinates();
         int[] end = model.getEndCoordinates();
 
+        // Create the line and add it to the shapes array list
         Line2D line = new Line2D.Double(start[0], start[1], end[0], end[1]);
         shapes.add(line);
     }
@@ -112,7 +152,7 @@ public class DrawPanel extends JPanel {
         // Get position of the ellipse
         int[] pos = model.getPosition();
 
-        // Create the ellipse shape
+        // Create the ellipse shape and add it to the shapes
         Ellipse2D ellipse = new Ellipse2D.Double(pos[0], pos[1], pos[2], pos[3]);
         shapes.add(ellipse);
     }
@@ -122,47 +162,73 @@ public class DrawPanel extends JPanel {
      * */
     public void addPolygon(ShapeModel2D model) {
 
+        // Get position of the model
         int[] xpoints = model.getXpoints();
         int[] ypoints = model.getYpoints();
 
-        // Create the polygon
+        // Create the polygon and add to shapes array list
         Polygon rectangle = new Polygon(xpoints, ypoints, xpoints.length);
         shapes.add(rectangle);
     }
 
-    public Shape getLastShape(ArrayList<Shape> s) {
+    /** Returns the last object of the ArrayList shapes passed to the method.
+     * @param shape Shape ArrayList of which we want the last object.
+     * @return Last shape if available else null*/
+    public Shape getLastShape(ArrayList<Shape> shape) {
         try {
-            return s.get(s.size() - 1);
-        } catch(IndexOutOfBoundsException ioobe) {
+            return shape.get(shape.size() - 1);
+        }
+        // In case the shape array list is empty
+        catch(IndexOutOfBoundsException ioobe) {
             return null;
         }
     }
 
-    public IShapeModel getLastModel(ArrayList<IShapeModel> m) {
+    /** Returns the last object of the ArrayList models passed to the method.
+     * @param model Model ArrayList of which we want the last object.
+     * @return Last model if available else null*/
+    public IShapeModel getLastModel(ArrayList<IShapeModel> model) {
         try {
-            return m.get(m.size() - 1);
-        } catch(IndexOutOfBoundsException ioobe) {
+            return model.get(model.size() - 1);
+        }
+        // In case the array is empty
+        catch(IndexOutOfBoundsException ioobe) {
             return null;
         }
     }
 
+    /** Get the most recently created model that is located on the point passed to the method.
+     * @param point Point for which we want to check for models.
+     * @return Most recently created model containing the point, or if none returns null. */
     public IShapeModel getModelOnPoint (Point point) {
+
+        // Last index of array list
         final int size = shapes.size() - 1;
+
+        // Search the array list backwards for a shape containing the point.
         for (int i = size; i >= 0; i--) {
+
             Shape shape = shapes.get(i);
 
+            // Initialise boolean variable that tells us whether the current shape is a Line2D object
             boolean isLine = false;
 
             if (shape instanceof Line2D) {
 
-                // If click is within a 2 x 2 square of the line, accept.
+                // If point is not within a 2 x 2 square of the line, jump to next iteration. Else, continue
+                // handling the shape.
                 if (!shape.intersects((int) point.getX() - 1, (int) point.getY() - 1, 2, 2)) continue;
 
+                // Mark that the current shape is a line
                 isLine = true;
             }
 
+            // If shape contains point (or the line contains the point)
             if (shape.contains(point) | isLine) {
+                // Get the model
                 IShapeModel model = models.get(i);
+
+                // Remove the model and shape and return models
                 models.remove(i);
                 shapes.remove(i);
                 return model;
@@ -186,62 +252,73 @@ public class DrawPanel extends JPanel {
 
     /** Remove last Shape. */
     public void undo() {
-        Shape s = getLastShape(shapes);
-        IShapeModel m = getLastModel(models);
-        if (s == null & m == null) {
-            System.err.println("Nothing to undo");
+        Shape shape = getLastShape(shapes);
+        IShapeModel model = getLastModel(models);
+        if (shape == null & model == null) {
+            // Idea for future improvement: Notify user that undo is impossible with a ping sound etc.
+            System.out.println("Nothing to undo");
         } else {
             // handle shapes
-            undoneShapes.add(s);
-            shapes.remove(s);
+            undoneShapes.add(shape);
+            shapes.remove(shape);
 
             // handle models
-            undoneModels.add(m);
-            models.remove(m);
-
+            undoneModels.add(model);
+            models.remove(model);
         }
     }
 
     /** Redo the last removed shape. */
     public void redo() {
-        Shape s = getLastShape(undoneShapes);
-        IShapeModel m = getLastModel(undoneModels);
-        if (s == null & m == null) {
-            System.err.println("Nothing to redo");
+        Shape shape = getLastShape(undoneShapes);
+        IShapeModel model = getLastModel(undoneModels);
+        if (shape == null & model == null) {
+            // Idea for future improvement: Notify user that redo is impossible with a ping sound etc.
+            System.out.println("Nothing to redo");
         } else {
             // handle shape
-            undoneShapes.remove(s);
-            shapes.add(s);
+            undoneShapes.remove(shape);
+            shapes.add(shape);
 
             // handle models
-            undoneModels.remove(m);
-            models.add(m);
+            undoneModels.remove(model);
+            models.add(model);
         }
     }
 
+    /** Write the current models to a file. Calls WriteToFile.write().
+     * @param filename The desired name for a file. */
     public void writeToFile(String filename) {
+
+        // Write the file
         try {
             WriteToFile.write(models, filename);
-        } catch (IOException ioe) {
+        }
+        // In case of an error, show a warning to the user.
+        catch (IOException ioe) {
             JOptionPane.showMessageDialog(this, "There was an error while saving your file.");
         }
-
     }
 
+    /** Read models from a file. Calls ReadFromFile.read().
+     * @param filename The name of the desired file. */
     public void readFromFile(String filename) {
+
         try {
-            ArrayList<IShapeModel> newModels = ReadFromFile.read(filename);
+            // Read the file and set them as the new models
+            models = ReadFromFile.read(filename);
 
-            // set the new models
-            models = newModels;
+            // clear any currently existing shapes
             shapes.clear();
-            for (IShapeModel m : models) {
-                addShapeFromModel(m);
-            }
 
-        } catch (IOException | ClassNotFoundException e) {
+            // add the new shapes from the models read from the file.
+            for (IShapeModel model : models) {
+                addShapeFromModel(model);
+            }
+        }
+        // In case of an error display a message to the user.
+        catch (IOException | ClassNotFoundException e) {
             JOptionPane.showMessageDialog(this, "There was an error while opening the file.");
         }
     }
-
 }

@@ -14,6 +14,7 @@ public class TriangleModel extends ShapeModel2D {
         int[] xpoints = {startX, (startX + startX) - endX, endX};
         int[] ypoints = {startY, endY, endY};
 
+        // Set the corner coordinates
         this.xpoints = xpoints;
         this.ypoints = ypoints;
 
@@ -41,5 +42,4 @@ public class TriangleModel extends ShapeModel2D {
         calcPosition();
         return ypoints;
     }
-
 }

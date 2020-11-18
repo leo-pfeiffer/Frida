@@ -17,3 +17,8 @@
 ### Remove compiled class files:
 Run from project root:
 `find . -name "*.class" -type f -delete`
+
+# References
+
+The idea for the calculation of the coordinates of the five point star were taken from here:
+https://math.stackexchange.com/q/3582355

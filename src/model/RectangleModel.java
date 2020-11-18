@@ -7,7 +7,7 @@ public class RectangleModel extends ShapeModel2D {
     /** Custom constructor. */
     public RectangleModel() { }
 
-    /** Calculate the corners of the rectangle. */
+    /** Calculate the x and y coordinates of the corners of the parallelogram. */
     private void calcPosition() {
         //  Get the maxima and minima of the coordinates
         int xmin = Math.min(startX, endX);
@@ -19,17 +19,20 @@ public class RectangleModel extends ShapeModel2D {
         int[] xpoints;
         int[] ypoints;
 
+        // If aspect ratio is not locked
         if (!this.lockAspect) {
             xpoints = new int[]{xmin, xmax, xmax, xmin};
             ypoints = new int[]{ymin, ymin, ymax, ymax};
         }
 
-        // if lockAspect, h = w (square)
+        // if aspect ratio is locked, h = w (square)
         else {
             int h = Math.abs(endY - startY);
             xpoints = new int[]{xmin, xmin + h, xmin + h, xmin};
             ypoints = new int[]{ymin, ymin, ymin + h, ymin + h};
         }
+
+        // Save the the x and y coordinates of the model
         this.xpoints = xpoints;
         this.ypoints = ypoints;
 
@@ -40,6 +43,7 @@ public class RectangleModel extends ShapeModel2D {
     /**  {@inheritDoc} */
     @Override
     public int[][] getCorners() {
+        // calculate the x and y coordinates of the corners.
         calcPosition();
         return super.getCorners();
     }
@@ -47,6 +51,7 @@ public class RectangleModel extends ShapeModel2D {
     /**  {@inheritDoc} */
     @Override
     public int[] getXpoints() {
+        // calculate the x and y coordinates of the corners.
         calcPosition();
         return super.getXpoints();
     }
@@ -54,8 +59,8 @@ public class RectangleModel extends ShapeModel2D {
     /**  {@inheritDoc} */
     @Override
     public int[] getYpoints() {
+        // calculate the x and y coordinates of the corners.
         calcPosition();
         return super.getYpoints();
     }
-
 }

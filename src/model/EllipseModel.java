@@ -1,7 +1,7 @@
 package model;
 
 /** Represents an ellipse that is created by a framing rectangle created from the
- * start to the end point.
+ * start to the end point (i.e. based on a single line).
  * @author 190026921 */
 public class EllipseModel extends ShapeModel {
 

@@ -1,20 +1,59 @@
 package view;
 
+// Controllers
 import controller.IShapeController;
 import controller.ShapeController;
 import controller.Shape2DController;
-import model.*;
 
-import javax.swing.*;
-import java.awt.*;
-import java.awt.event.*;
+// models
+import model.EllipseModel;
+import model.HexagonModel;
+import model.IShapeModel;
+import model.LineModel;
+import model.ParallelogramModel;
+import model.RectangleModel;
+import model.ShapeModel2D;
+import model.StarModel;
+import model.TriangleModel;
+
+// java swing
+import javax.swing.AbstractAction;
+import javax.swing.Action;
+import javax.swing.JButton;
+import javax.swing.JComponent;
+import javax.swing.JFileChooser;
+import javax.swing.JFrame;
+import javax.swing.JMenu;
+import javax.swing.JMenuBar;
+import javax.swing.JMenuItem;
+import javax.swing.JOptionPane;
+import javax.swing.JToolBar;
+import javax.swing.KeyStroke;
+import javax.swing.SwingUtilities;
+
+// java awt
+import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.awt.Insets;
+import java.awt.Point;
+import java.awt.event.ActionEvent;
+import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
+import java.awt.event.MouseMotionListener;
+
+// java util and IO
 import java.io.File;
 import java.util.Observable;
 import java.util.Observer;
 import java.util.ArrayList;
 
-public class FridaView implements Observer, ActionListener {
+/** Class that defines the GUI view of the Frida programme.
+ * The different panels, buttons etc. are set up and the interaction with the user is defined. */
+public class FridaView implements Observer {
 
+    // Models, controllers, etc.
     /** Contains all active models. */
     private ArrayList<IShapeModel> models = new ArrayList<>();
     /** Contains all active controllers. */
@@ -22,6 +61,7 @@ public class FridaView implements Observer, ActionListener {
     /** The currently active model. */
     private IShapeModel activeModel;
 
+    // Constants
     /** Default width of the main frame. */
     private static final int DEFAULT_FRAME_WIDTH = 1200;
     /** Default height of the main frame. */
@@ -40,8 +80,6 @@ public class FridaView implements Observer, ActionListener {
     private DrawPanel drawPanel;
     /** File menu for saving, loading etc. */
     private JMenuBar fileMenu;
-    /** Editing menu for undoing etc. */
-    private JMenuBar editMenu;
     /** Toolbox to switch shapes etc. */
     private JToolBar toolbox;
 
@@ -66,30 +104,43 @@ public class FridaView implements Observer, ActionListener {
     private ColourPicker lineColourPicker;
     /** Button to pick a new fill colour */
     private ColourPicker fillColourPicker;
-
+    /** Stroke Styler to let the user pick a stroke size. */
     private StrokeStyler strokeStyler;
 
     /** A list containing all buttons. */
     private ArrayList<JButton> allButtons = new ArrayList<>();
 
-    /** Start coordinates. */
+    /** Start coordinates of a mouse movement. */
     private int[] start = new int[2];
-    /** Start coordinates. */
+    /** End coordinates of a mouse movement. */
     private int[] end = new int[2];
 
     /** If true, lock aspect ratio. */
     private boolean lockAspect = false;
 
+    /** If true, user can't draw shapes but can move existing ones. */
     private boolean moveMode = false;
+
+    /** True if the user is currently in the process of moving an object, i.e. has the mouse pressed down and
+     * is dragging an object across the panel. */
     private boolean moving = false;
 
+    /** Action to clear the panel. */
     Action clearAction;
+    /** Action to undo last shape. */
     Action undoAction;
+    /** Action to redo last undone shape. */
     Action redoAction;
+    /** Action to lock the aspect ratio. */
     Action lockAspectAction;
+    /** Action to unlock the aspect ratio. */
     Action unlockAspectAction;
+    /** Action to save the drawing. */
     Action saveAction;
+    /** Action open a file. */
     Action openAction;
+    /** Action to open the help dialog. */
+    Action helpAction;
 
     /** Construct a new object by setting up the components. */
     public FridaView() {
@@ -108,7 +159,6 @@ public class FridaView implements Observer, ActionListener {
 
         // Create the menus and toolbox
         fileMenu = new JMenuBar();
-        editMenu = new JMenuBar();
         toolbox = new JToolBar();
 
         // Setup the components
@@ -125,7 +175,10 @@ public class FridaView implements Observer, ActionListener {
         mainFrame.pack();
     }
 
+    /** Create all actions. */
     public void createActions() {
+
+        // Locking the aspect ratio
         lockAspectAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -133,6 +186,7 @@ public class FridaView implements Observer, ActionListener {
             }
         };
 
+        // Unlocking the aspect ratio
         unlockAspectAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -140,12 +194,18 @@ public class FridaView implements Observer, ActionListener {
             }
         };
 
+        // Opening a file
         openAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                // Open a file chooser dialog
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle("Open");
+
                 int returnVal = fileChooser.showOpenDialog(fileChooser);
+
+                // If user chooses file and clicks OK, read the file
                 if (returnVal == JFileChooser.APPROVE_OPTION) {
                     File selectedFile = fileChooser.getSelectedFile();
                     drawPanel.readFromFile(selectedFile.toString());
@@ -154,22 +214,35 @@ public class FridaView implements Observer, ActionListener {
             }
         };
 
+        // Save the drawing
         saveAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
+
+                // Open a file chooser dialog
                 JFileChooser fileChooser = new JFileChooser();
                 fileChooser.setDialogTitle("Save");
 
                 int userSelection = fileChooser.showSaveDialog(fileChooser);
 
+                // If user has entered a name and clicked OK, write the shapes to a file
                 if (userSelection == JFileChooser.APPROVE_OPTION) {
                     File saveFile = fileChooser.getSelectedFile();
                     drawPanel.writeToFile(saveFile.toString());
                 }
-
             }
         };
 
+        // Open the help dialog
+        helpAction = new AbstractAction() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                JOptionPane.showMessageDialog(mainFrame, HelpText.getText(), "Help",
+                        JOptionPane.INFORMATION_MESSAGE);
+            }
+        };
+
+        // Redo last undone shape
         redoAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -178,6 +251,7 @@ public class FridaView implements Observer, ActionListener {
             }
         };
 
+        // Undo last shape
         undoAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -186,6 +260,7 @@ public class FridaView implements Observer, ActionListener {
             }
         };
 
+        // Clear the current drawing panel.
         clearAction = new AbstractAction() {
             @Override
             public void actionPerformed(ActionEvent e) {
@@ -195,18 +270,18 @@ public class FridaView implements Observer, ActionListener {
         };
     }
 
-    /** Method to setup the different components of the main frame, i.e. toolbox and menu,
+    /** Setup the different components of the main frame, i.e. panel, toolbox, menu,
      * and add them to the main frame. */
     public void setupComponents() {
         this.setupPanel();
-        this.setupFileMenu();
-        this.setupEditMenu();
+        this.setupMenus();
         this.setupToolbox();
     }
 
     /** Setup the draw panel */
     public void setupPanel() {
 
+        // Set foreground colour and make it opaque
         this.drawPanel.setForeground(DRAW_BACKGROUND_COLOUR);
         this.drawPanel.setOpaque(true);
 
@@ -226,6 +301,7 @@ public class FridaView implements Observer, ActionListener {
         mainFrame.add(drawPanel, BorderLayout.SOUTH);
     }
 
+    /** Add actions to certain keys. */
     private void addActionAndInputMapsToDrawPanel() {
 
         // Clear
@@ -246,6 +322,12 @@ public class FridaView implements Observer, ActionListener {
 
         this.drawPanel.getActionMap().put("redo", redoAction);
 
+        // Help
+        this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
+                KeyStroke.getKeyStroke("H"), "help");
+
+        this.drawPanel.getActionMap().put("help", helpAction);
+
         // Save
         this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke("S"), "save");
@@ -258,7 +340,7 @@ public class FridaView implements Observer, ActionListener {
 
         this.drawPanel.getActionMap().put("open", openAction);
 
-        // Lock Aspect Ratio
+        // Lock and unlock aspect ratio
         this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
                 KeyStroke.getKeyStroke("L"), "lock aspect");
         this.drawPanel.getInputMap(JComponent.WHEN_IN_FOCUSED_WINDOW).put(
@@ -268,57 +350,53 @@ public class FridaView implements Observer, ActionListener {
         this.drawPanel.getActionMap().put("unlock aspect", unlockAspectAction);
     }
 
-    public void setupFileMenu() {
-        // Fill menu bar
+    /** Set up the menu bar. */
+    public void setupMenus() {
+        // Set up file and edit menus
         JMenu file = new JMenu ("File");
+        JMenu edit = new JMenu ("Edit");
+
+        // Create the items
         JMenuItem open = new JMenuItem ("Open");
         JMenuItem save = new JMenuItem ("Save");
         JMenuItem help = new JMenuItem ("Help");
-        file.add (open);
-        file.add (save);
-        file.add (help);
-        fileMenu.add (file);
 
-        open.addActionListener(e -> {
-            openAction.actionPerformed(e);
-        });
-
-        save.addActionListener(e -> {
-            saveAction.actionPerformed(e);
-        });
-
-        help.addActionListener(e -> {
-            // todo call appropriate method in model
-            JOptionPane.showMessageDialog(mainFrame, "Help not linked to model!");
-        });
-
-        mainFrame.setJMenuBar(fileMenu);
-    }
-
-    public void setupEditMenu() {
-        // Fill menu bar
-        JMenu edit = new JMenu ("Edit");
         JMenuItem undo = new JMenuItem ("Undo");
         JMenuItem redo = new JMenuItem ("Redo");
         JMenuItem clear = new JMenuItem ("Clear");
+
+        // Add items to the menu
+        file.add (open);
+        file.add (save);
+        file.add (help);
+
         edit.add (undo);
         edit.add (redo);
         edit.add (clear);
-        fileMenu.add (edit);
 
-        undo.addActionListener(e -> {
-            undoAction.actionPerformed(e);
-        });
+        // Add menus to the overall menu
+        fileMenu.add(file);
+        fileMenu.add(edit);
 
-        redo.addActionListener(e -> {
-            redoAction.actionPerformed(e);
-        });
+        // Add action listeners and actions to the items
+        addActionListenerToMenuItem(open, openAction);
+        addActionListenerToMenuItem(save, saveAction);
+        addActionListenerToMenuItem(help, helpAction);
 
-        clear.addActionListener(e -> {
-            clearAction.actionPerformed(e);
-        });
+        addActionListenerToMenuItem(undo, undoAction);
+        addActionListenerToMenuItem(redo, redoAction);
+        addActionListenerToMenuItem(clear, clearAction);
 
+        // Attach the menu bar to the main frame
         mainFrame.setJMenuBar(fileMenu);
+        mainFrame.setJMenuBar(fileMenu);
+    }
+
+    /** Add an action listener and an action to a JMenuItem.
+     * @param item the JMenuItem.
+     * @param action the action to be attached. */
+    public void addActionListenerToMenuItem(JMenuItem item, Action action) {
+        item.addActionListener(action);
     }
 
     /** Set up all components of the toolbox, add the ActionListeners and
@@ -359,16 +437,18 @@ public class FridaView implements Observer, ActionListener {
         starButton = new JButton("Star");
         allButtons.add(starButton);
 
-        for (JButton b : allButtons) {
+        // Add ActionListeners to all buttons, set their margin and add them to the toolbox
+        for (JButton button : allButtons) {
             // add ActionListeners
-            addActionListenerToButton(b);
+            addActionListenerToButton(button);
 
-            if (!(b instanceof StrokeStyler)) {
-                b.setMargin(new Insets(7, 4, 7, 4));
+            // Set margins
+            if (!(button instanceof StrokeStyler)) {
+                button.setMargin(new Insets(7, 4, 7, 4));
             }
 
             // Add buttons to toolbox
-            toolbox.add(b);
+            toolbox.add(button);
         }
 
         // add toolbox to the top of the main frame
@@ -380,47 +460,46 @@ public class FridaView implements Observer, ActionListener {
 
     /** Add the appropriate ActionListener to the button and set the behaviour
      * for actionPerformed.
-     * @param b The button the ActionListener is added to. */
-    public void addActionListenerToButton(JButton b) {
-        b.addActionListener(e -> {
+     * @param button The button the ActionListener is added to. */
+    public void addActionListenerToButton(JButton button) {
+        button.addActionListener(e -> {
 
             // Define the appropriate action upon actionPerformed for each button
-            switch (b.getText()) {
-                case "Move" -> {
-                    activateButton(b);
-                }
+            switch (button.getText()) {
+                case "Move" -> activateButton(button);
                 case "Line" -> {
-                    activateButton(b);
+                    activateButton(button);
                     activeModel = new LineModel();
                 }
                 case "Rectangle" -> {
-                    activateButton(b);
+                    activateButton(button);
                     activeModel = new RectangleModel();
                 }
                 case "Parallelogram" -> {
-                    activateButton(b);
+                    activateButton(button);
                     activeModel = new ParallelogramModel();
                 }
                 case "Triangle" -> {
-                    activateButton(b);
+                    activateButton(button);
                     activeModel = new TriangleModel();
                 }
                 case "Hexagon" -> {
-                    activateButton(b);
+                    activateButton(button);
                     activeModel = new HexagonModel();
                 }
                 case "Ellipse" -> {
-                    activateButton(b);
+                    activateButton(button);
                     activeModel = new EllipseModel();
                 }
                 case "Star" -> {
-                    activateButton(b);
+                    activateButton(button);
                     activeModel = new StarModel();
                 }
             }
         });
     }
 
+    /** Add a mouse listener to the drawing panel that listens to the user's mouse clicks. */
     public void addMouseListenerToDrawPanel() {
         this.drawPanel.addMouseListener(new MouseListener() {
             @Override
@@ -431,6 +510,7 @@ public class FridaView implements Observer, ActionListener {
                 // end a line
                 Point point = e.getPoint();
 
+                // If we're not in move mode, send the end point to the controller as EndCoordinates
                 if (!moveMode) {
                     setEnd(point);
                     if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
@@ -439,11 +519,20 @@ public class FridaView implements Observer, ActionListener {
                     getCurrentController().setEndCoordinates(end[0], end[1]);
                 }
 
+                // In move mode, send the end point to the controller as MoveEnd
                 else {
+                    // Only do this if the user is actually dragging a shape
                     if (moving) {
+                        // set the end point of the move
                         getCurrentController().setMoveEnd((int) point.getX(), (int) point.getY());
+
+                        // move the model
                         getCurrentController().move();
+
+                        // Save current end point as start point for next move
                         getCurrentController().setMoveStart((int) point.getX(), (int) point.getY());
+
+                        // Done moving.
                         moving = false;
                     }
                 }
@@ -454,16 +543,22 @@ public class FridaView implements Observer, ActionListener {
                 // start a line
                 Point point = e.getPoint();
 
+                // If we're not in move mode, set point as StartCoordinates
                 if (!moveMode) {
                     setStart(point);
                     createNewModel();
                     getCurrentController().setStartCoordinates(start[0], start[1]);
                 }
 
+                // In move mode, get the model at the point where the user clicked and get it ready to move.
                 else {
                     moving = false;
                     IShapeModel modelOnPoint = drawPanel.getModelOnPoint(point);
+
+                    // If there's actually a shape where the user clicked
                     if (modelOnPoint != null) {
+
+                        // reset the activeModel to the one selected by the user
                         activeModel = modelOnPoint;
                         moving = true;
 
@@ -476,9 +571,10 @@ public class FridaView implements Observer, ActionListener {
                         controllers.add(controllers.get(ind));
                         controllers.remove(ind);
 
+                        // Re-add the model to be moved to the drawing panel
                         drawPanel.addModel(activeModel);
 
-                        // Get controller
+                        // Set the starting point of the move
                         getCurrentController().setMoveStart((int) point.getX(), (int) point.getY());
                     }
                 }
@@ -492,12 +588,16 @@ public class FridaView implements Observer, ActionListener {
         });
     }
 
+    /** Add a mouse motion listener to the drawing panel that listens to the user's mouse movements. */
     private void addMouseMotionListenerToDrawPanel() {
         this.drawPanel.addMouseMotionListener(new MouseMotionListener() {
             @Override
             public void mouseDragged(MouseEvent e) {
                 Point point = e.getPoint();
+
+                // If we're not in move mode, update the EndCoordinates of the model
                 if (!moveMode) {
+                    // For ellipses and rectangles, consider whether the aspect ratio is locked
                     if (activeModel instanceof EllipseModel | activeModel instanceof RectangleModel) {
                         getCurrentController().setLockAspect(lockAspect);
                     }
@@ -505,10 +605,15 @@ public class FridaView implements Observer, ActionListener {
                     getCurrentController().setEndCoordinates(end[0], end[1]);
                 }
 
+                // If in move mode, actually move the shape
                 else {
+                    // Must have a shape selected to be able to move.
                     if (moving) {
+                        // set the end point of the move
                         getCurrentController().setMoveEnd((int) point.getX(), (int) point.getY());
+                        // Move the model
                         getCurrentController().move();
+                        // Save current end point as start point for next move
                         getCurrentController().setMoveStart((int) point.getX(), (int) point.getY());
                     }
                 }
@@ -543,32 +648,28 @@ public class FridaView implements Observer, ActionListener {
         drawPanel.addModel(activeModel);
     }
 
-    @Override
-    public void actionPerformed(ActionEvent e) {}
-
+    /** This is called automatically whenever one of the models notifies the Observer (this class) of a change.
+     * @param arg used for internal purposes. */
     @Override
     public void update(Observable o, Object arg) {
-        SwingUtilities.invokeLater(
-                new Runnable() {
-                    public void run() {
+        SwingUtilities.invokeLater(() -> {
 
-                        // If we draw a 2D shape, apply a fill colour
-                        if (activeModel instanceof ShapeModel2D) {
-                            // ((ShapeModel2D) activeModel).setFillColour(fillColourPicker.getColour());
-                            ((Shape2DController) getCurrentController()).setFillColour(fillColourPicker.getColour());
-                        }
-
-                        // Set the model colour to the current state of the colour picker
-                        // activeModel.setLineColour(lineColourPicker.getColour());
-                        getCurrentController().setLineColour(lineColourPicker.getColour());
-                        getCurrentController().setStrokeSize(strokeStyler.getStrokeSize());
-
-                        // Update the position of the shape.
-                        drawPanel.updateLastShape();
-
-                        // repaint
-                        mainFrame.repaint();
+                    // If we draw a 2D shape, apply a fill colour
+                    if (activeModel instanceof ShapeModel2D) {
+                        // ((ShapeModel2D) activeModel).setFillColour(fillColourPicker.getColour());
+                        ((Shape2DController) getCurrentController()).setFillColour(fillColourPicker.getColour());
                     }
+
+                    // Set the model colour to the current state of the colour picker
+                    // activeModel.setLineColour(lineColourPicker.getColour());
+                    getCurrentController().setLineColour(lineColourPicker.getColour());
+                    getCurrentController().setStrokeSize(strokeStyler.getStrokeSize());
+
+                    // Update the position of the shape.
+                    drawPanel.updateLastShape();
+
+                    // repaint
+                    mainFrame.repaint();
                 });
     }
 
@@ -577,34 +678,40 @@ public class FridaView implements Observer, ActionListener {
      * @param button The button to be activated. */
     public void activateButton(JButton button){
 
+        // Determine if the button to be activated is the move button and if so set the moveMode to true.
         moveMode = button.getText().equals("Move");
 
-        for (JButton b : allButtons) {
+        for (JButton butt : allButtons) {
             // Set button layout to active for the specified button
-            if (b.equals(button)) {
-                Font bold = b.getFont().deriveFont(Font.BOLD);
-                b.setFont(bold);
-                b.setForeground(Color.BLACK);
+            if (butt.equals(button)) {
+                Font bold = butt.getFont().deriveFont(Font.BOLD);
+                butt.setFont(bold);
+                butt.setForeground(Color.BLACK);
             }
             // Set button layout to inactive for all other buttons
             else {
-                Font plain = b.getFont().deriveFont(Font.PLAIN);
-                b.setFont(plain);
-                b.setForeground(Color.DARK_GRAY);
+                Font plain = butt.getFont().deriveFont(Font.PLAIN);
+                butt.setFont(plain);
+                butt.setForeground(Color.DARK_GRAY);
             }
         }
     }
 
-    public void setStart(Point p) {
-        this.start[0] = (int) p.getX();
-        this.start[1] = (int) p.getY();
+    /** Set the start point of a mouse movement.
+     * @param point Point where the movement started. */
+    public void setStart(Point point) {
+        this.start[0] = (int) point.getX();
+        this.start[1] = (int) point.getY();
     }
 
-    public void setEnd(Point p) {
-        this.end[0] = (int) p.getX();
-        this.end[1] = (int) p.getY();
+    /** Set the end point of a mouse movement.
+     * @param point Point where the movement ended. */
+    public void setEnd(Point point) {
+        this.end[0] = (int) point.getX();
+        this.end[1] = (int) point.getY();
     }
 
+    /** Set up a full model from the model that is currently set as the active model. */
     public void createNewModel() {
         // New line
         if (activeModel instanceof LineModel) {
