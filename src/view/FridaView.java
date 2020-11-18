@@ -465,35 +465,44 @@ public class FridaView implements Observer {
 
             // Define the appropriate action upon actionPerformed for each button
             switch (button.getText()) {
-                case "Move" -> activateButton(button);
-                case "Line" -> {
+                case "Move":
+                    activateButton(button);
+                    break;
+
+                case "Line":
                     activateButton(button);
                     activeModel = new LineModel();
-                }
-                case "Rectangle" -> {
+                    break;
+
+                case "Rectangle":
                     activateButton(button);
                     activeModel = new RectangleModel();
-                }
-                case "Parallelogram" -> {
+                    break;
+
+                case "Parallelogram":
                     activateButton(button);
                     activeModel = new ParallelogramModel();
-                }
-                case "Triangle" -> {
+                    break;
+
+                case "Triangle":
                     activateButton(button);
                     activeModel = new TriangleModel();
-                }
-                case "Hexagon" -> {
+                    break;
+
+                case "Hexagon":
                     activateButton(button);
                     activeModel = new HexagonModel();
-                }
-                case "Ellipse" -> {
+                    break;
+
+                case "Ellipse":
                     activateButton(button);
                     activeModel = new EllipseModel();
-                }
-                case "Star" -> {
+                    break;
+
+                case "Star":
                     activateButton(button);
                     activeModel = new StarModel();
-                }
+                    break;
             }
         });
     }
