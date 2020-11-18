@@ -12,6 +12,8 @@ import org.junit.Test;
 import java.awt.*;
 import java.io.File;
 import java.io.IOException;
+import java.io.Serial;
+import java.io.Serializable;
 import java.util.ArrayList;
 
 import static org.junit.Assert.*;
@@ -22,6 +24,7 @@ public class WriteReadFileTest {
     private EllipseModel ellipseModel;
     private RectangleModel rectangleModel;
     private String filename;
+    private String noFilename;
 
     @Before
     public void setup() {
@@ -41,11 +44,13 @@ public class WriteReadFileTest {
         // Add the ellipse and the rectangle to the models ArrayList
         models.add(ellipseModel);
         models.add(rectangleModel);
+
+        filename = "test_file.frida";
+        noFilename = "not_a_file.frida";
     }
 
     @Test
-    public void testWritingCreatesFile() {
-        filename = "test_file.frida";
+    public void testWritingCreatesFile() throws IOException {
         WriteToFile.write(models, filename);
 
         File file = new File(filename);
@@ -53,43 +58,34 @@ public class WriteReadFileTest {
     }
 
     @Test
-    public void testReadingFileCreatesModels() {
+    public void testReadingFileCreatesModels() throws IOException, ClassNotFoundException {
         // First write the file
-        filename = "test_file.frida";
+
         WriteToFile.write(models, filename);
 
-        try {
-            ArrayList<IShapeModel> readModels = ReadFromFile.read(filename);
-            for (int i = 0; i < readModels.size() - 1; i++) {
+        ArrayList<IShapeModel> readModels = ReadFromFile.read(filename);
+        for (int i = 0; i < readModels.size() - 1; i++) {
                 IShapeModel rm = readModels.get(i);
                 IShapeModel m = models.get(i);
 
-                assertEquals(rm.getStartCoordinates(), m.getStartCoordinates());
-                assertEquals(rm.getEndCoordinates(), m.getEndCoordinates());
+                assertArrayEquals(rm.getStartCoordinates(), m.getStartCoordinates());
+                assertArrayEquals(rm.getEndCoordinates(), m.getEndCoordinates());
                 assertEquals(rm.getLineColour(), m.getLineColour());
                 assertEquals(rm.getStrokeSize(), m.getStrokeSize());
             }
-        } catch (IOException | ClassNotFoundException e) {
-            e.printStackTrace();
-        }
     }
 
     @Test(expected = IOException.class)
-    public void testReadingNonExistentFileFails() throws IOException {
-        filename = "not_a_file.frida";
+    public void testReadingNonExistentFileFails() throws IOException, ClassNotFoundException {
 
-        try {
-            ArrayList<IShapeModel> readModels = ReadFromFile.read(filename);
-        } catch (IOException | ClassNotFoundException e) {
-            throw new IOException();
-        }
+        ArrayList<IShapeModel> readModels = ReadFromFile.read(noFilename);
     }
 
     @AfterClass
     public static void cleanUp() {
         File file = new File("test_file.frida");
         if (file.exists()) {
-            file.delete();
+            assertTrue(file.delete());
         }
     }
 }

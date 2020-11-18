@@ -8,7 +8,7 @@ import java.io.IOException;
 import java.util.ArrayList;
 
 import java.awt.geom.Line2D;
-import javax.swing.JPanel;
+import javax.swing.*;
 
 public class DrawPanel extends JPanel {
 
@@ -220,7 +220,12 @@ public class DrawPanel extends JPanel {
     }
 
     public void writeToFile(String filename) {
-        WriteToFile.write(models, filename);
+        try {
+            WriteToFile.write(models, filename);
+        } catch (IOException ioe) {
+            JOptionPane.showMessageDialog(this, "There was an error while saving your file.");
+        }
+
     }
 
     public void readFromFile(String filename) {
@@ -235,7 +240,7 @@ public class DrawPanel extends JPanel {
             }
 
         } catch (IOException | ClassNotFoundException e) {
-            System.err.println(e.getMessage());
+            JOptionPane.showMessageDialog(this, "There was an error while opening the file.");
         }
     }
 
