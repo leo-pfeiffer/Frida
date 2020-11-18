@@ -18,7 +18,7 @@ public abstract class HelpText {
                 "There are a few keyboard shortcut that make it easier to use Frida.\n" +
                 "- Press U to undo the last shape.\n" +
                 "- Press R to redo what you've just undone.\n" +
-                "- Press C to delete all current shapes.\n" +
+                "- Press C to delete all current shapes. Watch out, this cannot be undone.\n" +
                 "- Press and hold L while you draw an Ellipse or a Rectangle to lock the aspect " +
                 "ratio to draw a Circle or a Square.\n" +
                 "- Press S to save your current file.\n" +

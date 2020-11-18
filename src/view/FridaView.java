@@ -54,8 +54,6 @@ import java.util.ArrayList;
 public class FridaView implements Observer {
 
     // Models, controllers, etc.
-    /** Contains all active models. */
-    private ArrayList<IShapeModel> models = new ArrayList<>();
     /** Contains all active controllers. */
     private ArrayList<IShapeController> controllers = new ArrayList<>();
     /** The currently active model. */
@@ -155,7 +153,7 @@ public class FridaView implements Observer {
         createActions();
 
         // Create the control and draw panels
-        drawPanel = new DrawPanel();
+        drawPanel = new DrawPanel(this);
 
         // Create the menus and toolbox
         fileMenu = new JMenuBar();
@@ -563,11 +561,11 @@ public class FridaView implements Observer {
                         moving = true;
 
                         // Get index of model in the models array list
-                        int ind = models.indexOf(activeModel);
+                        int ind = drawPanel.getModels().indexOf(activeModel);
+
+                        drawPanel.removeModelAndShapeOnIndex(ind);
 
                         // Move model and controller at end of array list
-                        models.add(activeModel);
-                        models.remove(ind);
                         controllers.add(controllers.get(ind));
                         controllers.remove(ind);
 
@@ -637,9 +635,6 @@ public class FridaView implements Observer {
 
         // Add observer to new instance
         ((Observable) activeModel).addObserver(getOuterThis());
-
-        // add instance to existing models
-        models.add(activeModel);
 
         // add controller
         controllers.add(controller);
@@ -711,6 +706,54 @@ public class FridaView implements Observer {
         this.end[1] = (int) point.getY();
     }
 
+    /** After opening a file containing a model, this function adds appropriate controllers and observers to this model.
+     * @param model the model to be added and to add an observer & controller to */
+    public void addModelFromFile(IShapeModel model) {
+        // add an observer
+        ((Observable) model).addObserver(getOuterThis());
+
+        // New line
+        if (model instanceof LineModel) {
+            controllers.add(new ShapeController((LineModel) model));
+        }
+
+        // New rectangle
+        else if (model instanceof RectangleModel & !(model instanceof EllipseModel)) {
+            controllers.add(new Shape2DController((RectangleModel) model));
+        }
+
+        // New triangle
+        else if (model instanceof TriangleModel) {
+            controllers.add(new Shape2DController((TriangleModel) model));
+        }
+
+        // New parallelogram
+        else if (model instanceof ParallelogramModel) {
+            controllers.add(new Shape2DController((ParallelogramModel) model));
+        }
+
+        // New star
+        else if (model instanceof StarModel) {
+            ((Observable) model).addObserver(getOuterThis());
+            controllers.add(new Shape2DController((StarModel) model));
+        }
+
+        // New hexagon
+        else if (model instanceof HexagonModel) {
+            controllers.add(new Shape2DController((HexagonModel) model));
+        }
+
+        // New ellipse
+        if (model instanceof EllipseModel) {
+            controllers.add(new ShapeController((EllipseModel) model));
+        }
+    }
+
+    /** Clears all current controllers. */
+    public void clearControllers() {
+        this.controllers.clear();
+    }
+
     /** Set up a full model from the model that is currently set as the active model. */
     public void createNewModel() {
         // New line
@@ -755,7 +798,6 @@ public class FridaView implements Observer {
             activeModel = new EllipseModel();
             setupNewModel(new ShapeController((EllipseModel) activeModel));
         }
-
     }
 
     /** Get the last (i.e. current) element in the controllers list.

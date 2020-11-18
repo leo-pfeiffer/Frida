@@ -35,8 +35,11 @@ public class DrawPanel extends JPanel {
     /** Contains undone models. */
     private ArrayList<IShapeModel> undoneModels;
 
+    private FridaView frida;
+
     /** Custom constructor. */
-    public DrawPanel() {
+    public DrawPanel(FridaView frida) {
+        this.frida = frida;
         // set up the shapes and undone shapes
         shapes = new ArrayList<>();
         undoneShapes = new ArrayList<>();
@@ -227,27 +230,29 @@ public class DrawPanel extends JPanel {
             if (shape.contains(point) | isLine) {
                 // Get the model
                 IShapeModel model = models.get(i);
-
-                // Remove the model and shape and return models
-                models.remove(i);
-                shapes.remove(i);
                 return model;
             }
         }
         return null;
     }
 
+    /** Remove the model and shape of the current index from the array lists.
+     * @param index The index of the objects in the array lists to be deleted. */
+    public void removeModelAndShapeOnIndex(int index) {
+        models.remove(index);
+        shapes.remove(index);
+    }
+
     /** Clear all array lists that contain graphics. */
     public void clearAll() {
-        // Add them to the undone models and shapes
-        for (int i = 0; i < shapes.size(); i++) {
-            undoneModels.add(models.get(i));
-            undoneShapes.add(shapes.get(i));
-        }
 
         // Clear the shapes and models
         shapes.clear();
         models.clear();
+
+        // Also clear undone shapes and models
+        undoneShapes.clear();
+        undoneModels.clear();
     }
 
     /** Remove last Shape. */
@@ -310,9 +315,14 @@ public class DrawPanel extends JPanel {
 
             // clear any currently existing shapes
             shapes.clear();
+            undoneShapes.clear();
+            undoneModels.clear();
+
+            frida.clearControllers();
 
             // add the new shapes from the models read from the file.
             for (IShapeModel model : models) {
+                frida.addModelFromFile(model);
                 addShapeFromModel(model);
             }
         }
@@ -321,4 +331,11 @@ public class DrawPanel extends JPanel {
             JOptionPane.showMessageDialog(this, "There was an error while opening the file.");
         }
     }
+
+    /** Get the models.
+     * @return models currently on the drawpanel. */
+    public ArrayList<IShapeModel> getModels() {
+        return this.models;
+    }
+
 }
