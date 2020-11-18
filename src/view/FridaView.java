@@ -649,23 +649,25 @@ public class FridaView implements Observer {
     public void update(Observable o, Object arg) {
         SwingUtilities.invokeLater(() -> {
 
-                    // If we draw a 2D shape, apply a fill colour
-                    if (activeModel instanceof ShapeModel2D) {
-                        // ((ShapeModel2D) activeModel).setFillColour(fillColourPicker.getColour());
-                        ((Shape2DController) getCurrentController()).setFillColour(fillColourPicker.getColour());
-                    }
+            if (!moveMode) {
+                // If we draw a 2D shape, apply a fill colour
+                if (activeModel instanceof ShapeModel2D) {
+                    // ((ShapeModel2D) activeModel).setFillColour(fillColourPicker.getColour());
+                    ((Shape2DController) getCurrentController()).setFillColour(fillColourPicker.getColour());
+                }
 
-                    // Set the model colour to the current state of the colour picker
-                    // activeModel.setLineColour(lineColourPicker.getColour());
-                    getCurrentController().setLineColour(lineColourPicker.getColour());
-                    getCurrentController().setStrokeSize(strokeStyler.getStrokeSize());
+                // Set the model colour to the current state of the colour picker
+                // activeModel.setLineColour(lineColourPicker.getColour());
+                getCurrentController().setLineColour(lineColourPicker.getColour());
+                getCurrentController().setStrokeSize(strokeStyler.getStrokeSize());
+            }
 
-                    // Update the position of the shape.
-                    drawPanel.updateLastShape();
+            // Update the position of the shape.
+            drawPanel.updateLastShape();
 
-                    // repaint
-                    mainFrame.repaint();
-                });
+            // repaint
+            mainFrame.repaint();
+        });
     }
 
     /** Marks one button in the toolbox as active (bold & black) and all others
