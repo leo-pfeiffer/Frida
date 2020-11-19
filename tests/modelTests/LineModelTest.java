@@ -8,6 +8,8 @@ import java.awt.Color;
 
 import static org.junit.Assert.*;
 
+/** Test for the line model.
+ * @author 190026921 */
 public class LineModelTest {
 
     /** Model on which we perform our tests. */

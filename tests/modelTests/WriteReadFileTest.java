@@ -19,6 +19,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertTrue;
 
+/** Tests for WriteToFile and ReadFromFile classes.
+ * @author 190026921 */
 public class WriteReadFileTest {
 
     /** Contains the models. */

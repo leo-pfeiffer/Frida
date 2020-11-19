@@ -11,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
+/** Tests for the star model.
+ * @author 190026921 */
 public class StarModelTest {
 
     /** Model on which we perform our tests. */

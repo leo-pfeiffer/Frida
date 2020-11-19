@@ -11,6 +11,8 @@ import static org.junit.Assert.assertEquals;
 import static org.junit.Assert.assertFalse;
 import static org.junit.Assert.assertNull;
 
+/** Tests for the triangle model.
+ * @author 190026921 */
 public class TriangleModelTest {
 
     /** Model on which we perform our tests. */

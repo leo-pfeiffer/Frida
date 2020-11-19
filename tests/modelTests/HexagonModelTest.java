@@ -9,6 +9,8 @@ import java.awt.Color;
 import static org.junit.Assert.*;
 import static org.junit.Assert.assertArrayEquals;
 
+/** Tests for the hexagon model.
+ * @author 190026921 */
 public class HexagonModelTest {
 
     /** Model on which we perform our tests. */
