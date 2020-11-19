@@ -31,7 +31,7 @@ Finally, to run the JUnit tests, `cd` back into the root directory and run the c
 
 `java -cp ./tests/junit.jar:./tests/hamcrest.jar:./tests/:./src/:. org.junit.runner.JUnitCore modelTests.ModelTestSuite`
 
-All 65 Tests should be run.
+All 95 Tests should be run.
 
 ## Project structure
 Overall, the submitted folder contains two subdirectories, `src` and `tests`. All the actual source code is in the former while the latter contains the JUnit tests.
@@ -72,7 +72,7 @@ Another small feature I implemented is a help dialog that informs the user about
 All classes in the `models` package have been tested extensively using JUnit with a coverage of 100%. I tested the GUI manually.
 ### JUnit
 See the [Compile and run instructions](#compile-and-run-instructions) to see learn how the JUnit tests can be run. Basically I wrote a separate test class for each of the models (combining ReadFromFile and WriteToFile in one test class). I made sure to test all methods of all classes as to their expected behaviour including expected exceptions etc.
-In total, I wrote 65 JUnit tests, all of which passed.
+In total, I wrote 95 JUnit tests, all of which passed.
 ### Manual tests
 The manual tests were performed by playing around with the programme and trying out as many possible combinations and possible error sources as possible. Generally, the programme works as expected. The only issue that sometimes appeared was that small bits of the graphics were only rendered partly (such as a part of a line) when I moved the window to a second monitor and resized it. I couldn't resolve this issue, although I suspect it to be due to the change in aspect ratio when moving from one screen to another. 
 ## References
