@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNull;
 
 public class ParallelogramModelTest {
 
+    /** Model on which we perform our tests. */
     private ParallelogramModel para;
 
     /** Create a new parallelogram model. */

@@ -11,6 +11,7 @@ import static org.junit.Assert.assertArrayEquals;
 
 public class HexagonModelTest {
 
+    /** Model on which we perform our tests. */
     private HexagonModel hex;
 
     /** Create a new hexagon model. */

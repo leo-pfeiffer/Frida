@@ -14,6 +14,7 @@ import static org.junit.Assert.assertTrue;
 
 public class RectangleModelTest {
 
+    /** Model on which we perform our tests. */
     private RectangleModel rectangle;
 
     /** Create a new rectangle. */

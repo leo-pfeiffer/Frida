@@ -10,6 +10,7 @@ import static org.junit.Assert.*;
 
 public class LineModelTest {
 
+    /** Model on which we perform our tests. */
     private LineModel line;
 
     /** Create a new line model. */

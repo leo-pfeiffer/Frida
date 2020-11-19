@@ -13,6 +13,7 @@ import static org.junit.Assert.assertNull;
 
 public class StarModelTest {
 
+    /** Model on which we perform our tests. */
     private StarModel star;
 
     /** Create a new star model. */

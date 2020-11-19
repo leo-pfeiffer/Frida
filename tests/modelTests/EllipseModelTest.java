@@ -12,6 +12,7 @@ import static org.junit.Assert.*;
  * @author 190026921*/
 public class EllipseModelTest {
 
+    /** Model on which we perform our tests. */
     private EllipseModel ellipse;
 
     /** Create a new model instance */
