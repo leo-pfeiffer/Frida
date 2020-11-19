@@ -75,7 +75,7 @@ Another small feature I implemented is a help dialog that informs the user about
 All classes in the `models` package have been tested extensively using JUnit with a coverage of 100%. I tested the GUI manually.  
 
 ### JUnit  
-See the [Compile and run instructions](#compile-and-run-instructions) to see learn how the JUnit tests can be run. Basically I wrote a separate test class for each of the models (combining `ReadFromFile` and `WriteToFile` in one test class). I made sure to test all methods of all classes as to their expected behaviour including expected exceptions etc.  
+See the [Compile and run instructions](#com****pile-and-run-instructions) to see learn how the JUnit tests can be run. Basically I wrote a separate test class for each of the models (combining `ReadFromFile` and `WriteToFile` in one test class). I made sure to test all methods of all classes as to their expected behaviour including expected exceptions etc.  
 In total, I wrote 95 JUnit tests, all of which passed.  
 
 ### Manual tests  
