@@ -13,6 +13,7 @@ public class HexagonModelTest {
 
     private HexagonModel hex;
 
+    /** Create a new hexagon model. */
     @Before
     public void setup() {
         this.hex = new HexagonModel();
@@ -58,7 +59,7 @@ public class HexagonModelTest {
         assertArrayEquals(new int[]{x, y}, hex.getEndCoordinates());
     }
 
-
+    /** Test setting the line colour. */
     @Test
     public void testLineColour() {
         assertNull(hex.getLineColour());
@@ -67,6 +68,7 @@ public class HexagonModelTest {
         assertEquals(colour, hex.getLineColour());
     }
 
+    /** Test setting the fill colour. */
     @Test
     public void testFillColour() {
         assertNull(hex.getFillColour());
@@ -75,6 +77,7 @@ public class HexagonModelTest {
         assertEquals(colour, hex.getFillColour());
     }
 
+    /** Test setting the stroke size. */
     @Test
     public void testStrokeSize() {
         assertEquals(0, hex.getStrokeSize());
@@ -91,6 +94,7 @@ public class HexagonModelTest {
         hex.setStrokeSize(size);
     }
 
+    /** Test moving the hexagon. */
     @Test
     public void testMove() {
         // Initial values should be null
@@ -149,6 +153,7 @@ public class HexagonModelTest {
         hex.setMoveEnd(endX, endY);
     }
 
+    /** Test the update method. */
     @Test
     public void testUpdate() {
         // update() calls setChanged which sets changed to true.
@@ -159,6 +164,7 @@ public class HexagonModelTest {
         assertFalse(hex.hasChanged());
     }
 
+    /** test getting the coordinates. */
     @Test
     public void testPoints() {
 
@@ -184,6 +190,7 @@ public class HexagonModelTest {
         assertArrayEquals(expectedY, resultY, 2);
     }
 
+    /** Test getting the corners. */
     @Test
     public void testCorners() {
         int[][] initial = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0}};

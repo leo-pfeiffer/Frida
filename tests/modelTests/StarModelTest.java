@@ -15,6 +15,7 @@ public class StarModelTest {
 
     private StarModel star;
 
+    /** Create a new star model. */
     @Before
     public void setup() {
         this.star = new StarModel();
@@ -60,7 +61,7 @@ public class StarModelTest {
         assertArrayEquals(new int[]{x, y}, star.getEndCoordinates());
     }
 
-
+    /** Test setting and getting the line colour. */
     @Test
     public void testLineColour() {
         assertNull(star.getLineColour());
@@ -69,6 +70,7 @@ public class StarModelTest {
         assertEquals(colour, star.getLineColour());
     }
 
+    /** Test setting and getting the fill colour. */
     @Test
     public void testFillColour() {
         assertNull(star.getFillColour());
@@ -77,6 +79,7 @@ public class StarModelTest {
         assertEquals(colour, star.getFillColour());
     }
 
+    /** Test setting and getting the stroke size. */
     @Test
     public void testStrokeSize() {
         assertEquals(0, star.getStrokeSize());
@@ -93,6 +96,7 @@ public class StarModelTest {
         star.setStrokeSize(size);
     }
 
+    /** Test moving the star model. */
     @Test
     public void testMove() {
         // Initial values should be null
@@ -151,6 +155,7 @@ public class StarModelTest {
         star.setMoveEnd(endX, endY);
     }
 
+    /** Test update method. */
     @Test
     public void testUpdate() {
         // update() calls setChanged which sets changed to true.
@@ -161,6 +166,7 @@ public class StarModelTest {
         assertFalse(star.hasChanged());
     }
 
+    /** Test calculation and getting of the coordinates. */
     @Test
     public void testPoints() {
 
@@ -186,6 +192,7 @@ public class StarModelTest {
         assertArrayEquals(expectedY, resultY, 2);
     }
 
+    /** Test calculating and getting the corner coordinates. */
     @Test
     public void testCorners() {
         int[][] initial = {{0, 0}, {0, 0}, {0, 0}, {0, 0}, {0, 0},

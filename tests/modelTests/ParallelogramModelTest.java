@@ -15,6 +15,7 @@ public class ParallelogramModelTest {
 
     private ParallelogramModel para;
 
+    /** Create a new parallelogram model. */
     @Before
     public void setup() {
         this.para = new ParallelogramModel();
@@ -61,6 +62,7 @@ public class ParallelogramModelTest {
     }
 
 
+    /** Test setting and getting the line colour. */
     @Test
     public void testLineColour() {
         assertNull(para.getLineColour());
@@ -69,6 +71,7 @@ public class ParallelogramModelTest {
         assertEquals(colour, para.getLineColour());
     }
 
+    /** Test setting and getting the fill colour. */
     @Test
     public void testFillColour() {
         assertNull(para.getFillColour());
@@ -77,6 +80,7 @@ public class ParallelogramModelTest {
         assertEquals(colour, para.getFillColour());
     }
 
+    /** Test setting and getting the stroke size. */
     @Test
     public void testStrokeSize() {
         assertEquals(0, para.getStrokeSize());
@@ -93,6 +97,7 @@ public class ParallelogramModelTest {
         para.setStrokeSize(size);
     }
 
+    /** Test moving the parallelogram. */
     @Test
     public void testMove() {
         // Initial values should be null
@@ -151,6 +156,7 @@ public class ParallelogramModelTest {
         para.setMoveEnd(endX, endY);
     }
 
+    /** Test update method. */
     @Test
     public void testUpdate() {
         // update() calls setChanged which sets changed to true.
@@ -161,6 +167,7 @@ public class ParallelogramModelTest {
         assertFalse(para.hasChanged());
     }
 
+    /** Test setting and getting the points. */
     @Test
     public void testPoints() {
 
@@ -199,6 +206,7 @@ public class ParallelogramModelTest {
         assertArrayEquals(expectedY2, para.getYpoints());
     }
 
+    /** Test calculating and getting the corner coordinates. */
     @Test
     public void testCorners() {
         int[][] initial = {{0, 0}, {0, 0}, {0, 0}, {0, 0}};

@@ -16,6 +16,7 @@ public class RectangleModelTest {
 
     private RectangleModel rectangle;
 
+    /** Create a new rectangle. */
     @Before
     public void setup() {
         this.rectangle = new RectangleModel();
@@ -61,7 +62,7 @@ public class RectangleModelTest {
         assertArrayEquals(new int[]{x, y}, rectangle.getEndCoordinates());
     }
 
-
+    /** Test setting and getting the line colour. */
     @Test
     public void testLineColour() {
         assertNull(rectangle.getLineColour());
@@ -70,6 +71,7 @@ public class RectangleModelTest {
         assertEquals(colour, rectangle.getLineColour());
     }
 
+    /** Test setting and getting the fill colour. */
     @Test
     public void testFillColour() {
         assertNull(rectangle.getFillColour());
@@ -78,6 +80,7 @@ public class RectangleModelTest {
         assertEquals(colour, rectangle.getFillColour());
     }
 
+    /** Test setting and getting the stroke size. */
     @Test
     public void testStrokeSize() {
         assertEquals(0, rectangle.getStrokeSize());
@@ -94,6 +97,7 @@ public class RectangleModelTest {
         rectangle.setStrokeSize(size);
     }
 
+    /** Test moving the rectangle. */
     @Test
     public void testMove() {
         // Initial values should be null
@@ -152,6 +156,7 @@ public class RectangleModelTest {
         rectangle.setMoveEnd(endX, endY);
     }
 
+    /** Test update method. */
     @Test
     public void testUpdate() {
         // update() calls setChanged which sets changed to true.
@@ -162,6 +167,7 @@ public class RectangleModelTest {
         assertFalse(rectangle.hasChanged());
     }
 
+    /** Test setting and getting the lock of aspect ratio. */
     @Test
     public void testLockAspect() {
         assertFalse(rectangle.getLockAspect());
@@ -169,6 +175,7 @@ public class RectangleModelTest {
         assertTrue(rectangle.getLockAspect());
     }
 
+    /** Test calculation of the coordinates if aspect ratio is unlocked. */
     @Test
     public void testPointsUnlockedAspect() {
 
@@ -184,6 +191,7 @@ public class RectangleModelTest {
         assertArrayEquals(new int[] {0, 0, 20, 20}, rectangle.getYpoints());
     }
 
+    /** Test calculation of the coordinates if aspect ratio is locked. */
     @Test
     public void testPointsLockedAspect() {
         // Lock the aspect ratio
@@ -198,6 +206,7 @@ public class RectangleModelTest {
         assertArrayEquals(new int[] {0, 0, 20, 20}, rectangle.getYpoints());
     }
 
+    /** Test calculating and getting the corner coordinates. */
     @Test
     public void testCorners() {
         int[][] initial = {{0, 0}, {0, 0}, {0, 0}, {0, 0}};

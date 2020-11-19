@@ -12,6 +12,7 @@ public class LineModelTest {
 
     private LineModel line;
 
+    /** Create a new line model. */
     @Before
     public void setup() {
         line = new LineModel();
@@ -57,7 +58,7 @@ public class LineModelTest {
         assertArrayEquals(new int[]{x, y}, line.getEndCoordinates());
     }
 
-
+    /** Test setting and getting the line colour. */
     @Test
     public void testLineColour() {
         assertNull(line.getLineColour());
@@ -66,6 +67,7 @@ public class LineModelTest {
         assertEquals(colour, line.getLineColour());
     }
 
+    /** Test setting and getting the stroke size. */
     @Test
     public void testStrokeSize() {
         assertEquals(0, line.getStrokeSize());
@@ -82,6 +84,7 @@ public class LineModelTest {
         line.setStrokeSize(size);
     }
 
+    /** Test moving the line. */
     @Test
     public void testMove() {
         // Initial values should be null
@@ -119,7 +122,7 @@ public class LineModelTest {
         assertArrayEquals(new int[]{35, 45}, line.getEndCoordinates());
     }
 
-    /** Test that negative elements can't be set as move start */
+    /** Test that negative elements can't be set as move start. */
     @Test(expected = IllegalArgumentException.class)
     public void testSetMoveStartIncorrectly() {
         int startX = -5;
@@ -130,7 +133,7 @@ public class LineModelTest {
 
     }
 
-    /** Test that negative elements can't be set as move end */
+    /** Test that negative elements can't be set as move end. */
     @Test(expected = IllegalArgumentException.class)
     public void testSetMoveEndIncorrectly() {
         int endX = -30;
@@ -140,6 +143,7 @@ public class LineModelTest {
         line.setMoveEnd(endX, endY);
     }
 
+    /** Test the update method. */
     @Test
     public void testUpdate() {
         // update() calls setChanged which sets changed to true.
