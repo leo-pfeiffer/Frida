@@ -20,6 +20,7 @@ public class ParallelogramModelTest {
         this.para = new ParallelogramModel();
     }
 
+    /** Test setting the start coordinates works. */
     @Test
     public void testStartCoordinates() {
         assertArrayEquals(new int[]{0, 0}, para.getStartCoordinates());
@@ -29,6 +30,7 @@ public class ParallelogramModelTest {
         assertArrayEquals(new int[]{x, y}, para.getStartCoordinates());
     }
 
+    /** Test setting the end coordinates works. */
     @Test
     public void testEndCoordinates() {
         assertArrayEquals(new int[]{0, 0}, para.getEndCoordinates());
@@ -37,6 +39,27 @@ public class ParallelogramModelTest {
         para.setEndCoordinates(x, y);
         assertArrayEquals(new int[]{x, y}, para.getEndCoordinates());
     }
+
+    /** Test setting the start coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStartCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, para.getStartCoordinates());
+        int x = -42;
+        int y = -7;
+        para.setStartCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, para.getStartCoordinates());
+    }
+
+    /** Test setting the end coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testEndCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, para.getEndCoordinates());
+        int x = -21;
+        int y = -3;
+        para.setEndCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, para.getEndCoordinates());
+    }
+
 
     @Test
     public void testLineColour() {
@@ -60,6 +83,14 @@ public class ParallelogramModelTest {
         int size = 3;
         para.setStrokeSize(size);
         assertEquals(size, para.getStrokeSize());
+    }
+
+    /** Test setting the stroke size incorrectly. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStrokeSizeNegative() {
+        assertEquals(0, para.getStrokeSize());
+        int size = -1;
+        para.setStrokeSize(size);
     }
 
     @Test
@@ -97,6 +128,27 @@ public class ParallelogramModelTest {
         // Position should have moved
         assertArrayEquals(new int[]{25, 35}, para.getStartCoordinates());
         assertArrayEquals(new int[]{35, 45}, para.getEndCoordinates());
+    }
+
+    /** Test that negative elements can't be set as move start */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveStartIncorrectly() {
+        int startX = -5;
+        int startY = -5;
+
+        // Set the coordinates in the class
+        para.setMoveStart(startX, startY);
+
+    }
+
+    /** Test that negative elements can't be set as move end */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveEndIncorrectly() {
+        int endX = -30;
+        int endY = -40;
+
+        // Set the coordinates in the class
+        para.setMoveEnd(endX, endY);
     }
 
     @Test

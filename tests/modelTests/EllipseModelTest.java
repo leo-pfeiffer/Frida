@@ -8,15 +8,19 @@ import java.awt.Color;
 
 import static org.junit.Assert.*;
 
+/** JUnit tests for the Ellipse model.
+ * @author 190026921*/
 public class EllipseModelTest {
 
     private EllipseModel ellipse;
 
+    /** Create a new model instance */
     @Before
     public void setup() {
         ellipse = new EllipseModel();
     }
 
+    /** Test setting the start coordinates works. */
     @Test
     public void testStartCoordinates() {
         assertArrayEquals(new int[]{0, 0}, ellipse.getStartCoordinates());
@@ -26,6 +30,7 @@ public class EllipseModelTest {
         assertArrayEquals(new int[]{x, y}, ellipse.getStartCoordinates());
     }
 
+    /** Test setting the end coordinates works. */
     @Test
     public void testEndCoordinates() {
         assertArrayEquals(new int[]{0, 0}, ellipse.getEndCoordinates());
@@ -35,6 +40,27 @@ public class EllipseModelTest {
         assertArrayEquals(new int[]{x, y}, ellipse.getEndCoordinates());
     }
 
+    /** Test setting the start coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStartCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, ellipse.getStartCoordinates());
+        int x = -42;
+        int y = -7;
+        ellipse.setStartCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, ellipse.getStartCoordinates());
+    }
+
+    /** Test setting the end coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testEndCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, ellipse.getEndCoordinates());
+        int x = -21;
+        int y = -3;
+        ellipse.setEndCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, ellipse.getEndCoordinates());
+    }
+
+    /** Test setting the  line colour. */
     @Test
     public void testLineColour() {
         assertNull(ellipse.getLineColour());
@@ -43,6 +69,7 @@ public class EllipseModelTest {
         assertEquals(colour, ellipse.getLineColour());
     }
 
+    /** Test setting the stroke size correctly. */
     @Test
     public void testStrokeSize() {
         assertEquals(0, ellipse.getStrokeSize());
@@ -51,6 +78,15 @@ public class EllipseModelTest {
         assertEquals(size, ellipse.getStrokeSize());
     }
 
+    /** Test setting the stroke size incorrectly should throw IllegalArgumentException. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStrokeSizeNegative() {
+        assertEquals(0, ellipse.getStrokeSize());
+        int size = -1;
+        ellipse.setStrokeSize(size);
+    }
+
+    /** Test moving the shape. */
     @Test
     public void testMove() {
         // Initial values should be null
@@ -88,6 +124,28 @@ public class EllipseModelTest {
         assertArrayEquals(new int[]{35, 45}, ellipse.getEndCoordinates());
     }
 
+    /** Test that negative elements can't be set as move start */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveStartIncorrectly() {
+        int startX = -5;
+        int startY = -5;
+
+        // Set the coordinates in the class
+        ellipse.setMoveStart(startX, startY);
+
+    }
+
+    /** Test that negative elements can't be set as move end */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveEndIncorrectly() {
+        int endX = -30;
+        int endY = -40;
+
+        // Set the coordinates in the class
+        ellipse.setMoveEnd(endX, endY);
+    }
+
+    /** Test update behaviour. */
     @Test
     public void testUpdate() {
         // update() calls setChanged which sets changed to true.
@@ -98,6 +156,7 @@ public class EllipseModelTest {
         assertFalse(ellipse.hasChanged());
     }
 
+    /** Test locked aspect ratio. */
     @Test
     public void testLockAspect() {
         assertFalse(ellipse.getLockAspect());
@@ -105,6 +164,7 @@ public class EllipseModelTest {
         assertTrue(ellipse.getLockAspect());
     }
 
+    /** Test how the position is set with unlocked aspect ratio. */
     @Test
     public void testPositionUnlockedAspect() {
 
@@ -119,6 +179,7 @@ public class EllipseModelTest {
         assertArrayEquals(new int[] {0, 0, 10, 20}, ellipse.getPosition());
     }
 
+    /** Test how the position is set with locked aspect ratio. */
     @Test
     public void testPositionLockedAspect() {
         // Lock the aspect ratio
@@ -131,5 +192,4 @@ public class EllipseModelTest {
         // Assert that the positions are set accordingly (should be a circle now)
         assertArrayEquals(new int[] {0, 0, 10, 10}, ellipse.getPosition());
     }
-
 }

@@ -18,6 +18,7 @@ public class HexagonModelTest {
         this.hex = new HexagonModel();
     }
 
+    /** Test setting the start coordinates works. */
     @Test
     public void testStartCoordinates() {
         assertArrayEquals(new int[]{0, 0}, hex.getStartCoordinates());
@@ -27,6 +28,7 @@ public class HexagonModelTest {
         assertArrayEquals(new int[]{x, y}, hex.getStartCoordinates());
     }
 
+    /** Test setting the end coordinates works. */
     @Test
     public void testEndCoordinates() {
         assertArrayEquals(new int[]{0, 0}, hex.getEndCoordinates());
@@ -35,6 +37,27 @@ public class HexagonModelTest {
         hex.setEndCoordinates(x, y);
         assertArrayEquals(new int[]{x, y}, hex.getEndCoordinates());
     }
+
+    /** Test setting the start coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStartCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, hex.getStartCoordinates());
+        int x = -42;
+        int y = -7;
+        hex.setStartCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, hex.getStartCoordinates());
+    }
+
+    /** Test setting the end coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testEndCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, hex.getEndCoordinates());
+        int x = -21;
+        int y = -3;
+        hex.setEndCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, hex.getEndCoordinates());
+    }
+
 
     @Test
     public void testLineColour() {
@@ -58,6 +81,14 @@ public class HexagonModelTest {
         int size = 3;
         hex.setStrokeSize(size);
         assertEquals(size, hex.getStrokeSize());
+    }
+
+    /** Test setting the stroke size incorrectly. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStrokeSizeNegative() {
+        assertEquals(0, hex.getStrokeSize());
+        int size = -1;
+        hex.setStrokeSize(size);
     }
 
     @Test
@@ -95,6 +126,27 @@ public class HexagonModelTest {
         // Position should have moved
         assertArrayEquals(new int[]{25, 35}, hex.getStartCoordinates());
         assertArrayEquals(new int[]{35, 45}, hex.getEndCoordinates());
+    }
+
+    /** Test that negative elements can't be set as move start */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveStartIncorrectly() {
+        int startX = -5;
+        int startY = -5;
+
+        // Set the coordinates in the class
+        hex.setMoveStart(startX, startY);
+
+    }
+
+    /** Test that negative elements can't be set as move end */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveEndIncorrectly() {
+        int endX = -30;
+        int endY = -40;
+
+        // Set the coordinates in the class
+        hex.setMoveEnd(endX, endY);
     }
 
     @Test

@@ -41,16 +41,24 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
         this.notifyObservers();
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @throws IllegalArgumentException If negative coordinates are passed. */
     @Override
-    public void setStartCoordinates(int x, int y) {
+    public void setStartCoordinates(int x, int y) throws IllegalArgumentException{
+        if ((x < 0) | (y < 0)) {
+            throw new IllegalArgumentException();
+        }
         this.startX = x;
         this.startY = y;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @throws IllegalArgumentException If negative coordinates are passed. */
     @Override
-    public void setEndCoordinates(int x, int y) {
+    public void setEndCoordinates(int x, int y) throws IllegalArgumentException {
+        if ((x < 0) | (y < 0)) {
+            throw new IllegalArgumentException();
+        }
         this.endX = x;
         this.endY = y;
         update();
@@ -92,15 +100,23 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
         return this.lockAspect;
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @throws IllegalArgumentException if negative coordinates are passed. */
     @Override
-    public void setMoveStart(int x, int y) {
+    public void setMoveStart(int x, int y) throws IllegalArgumentException{
+        if ((x < 0) | (y < 0)) {
+            throw new IllegalArgumentException();
+        }
         this.moveStart = new int[] {x, y};
     }
 
-    /** {@inheritDoc} */
+    /** {@inheritDoc}
+     * @throws IllegalArgumentException if negative coordinates are passed. */
     @Override
     public void setMoveEnd(int x, int y) {
+        if ((x < 0) | (y < 0)) {
+            throw new IllegalArgumentException();
+        }
         this.moveEnd = new int[] {x, y};
     }
 
@@ -116,8 +132,13 @@ public abstract class ShapeModel extends Observable implements IShapeModel {
         return this.moveEnd;
     }
 
+    /** {@inheritDoc}
+     * @throws IllegalArgumentException if a negative integer is passed. */
     @Override
-    public void setStrokeSize(int size) {
+    public void setStrokeSize(int size) throws IllegalArgumentException{
+        if (size < 1) {
+            throw new IllegalArgumentException();
+        }
         this.strokeSize = size;
     }
 

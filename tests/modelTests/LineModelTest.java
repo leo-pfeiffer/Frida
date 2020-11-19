@@ -17,6 +17,7 @@ public class LineModelTest {
         line = new LineModel();
     }
 
+    /** Test setting the start coordinates works. */
     @Test
     public void testStartCoordinates() {
         assertArrayEquals(new int[]{0, 0}, line.getStartCoordinates());
@@ -26,6 +27,7 @@ public class LineModelTest {
         assertArrayEquals(new int[]{x, y}, line.getStartCoordinates());
     }
 
+    /** Test setting the end coordinates works. */
     @Test
     public void testEndCoordinates() {
         assertArrayEquals(new int[]{0, 0}, line.getEndCoordinates());
@@ -34,6 +36,27 @@ public class LineModelTest {
         line.setEndCoordinates(x, y);
         assertArrayEquals(new int[]{x, y}, line.getEndCoordinates());
     }
+
+    /** Test setting the start coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStartCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, line.getStartCoordinates());
+        int x = -42;
+        int y = -7;
+        line.setStartCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, line.getStartCoordinates());
+    }
+
+    /** Test setting the end coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testEndCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, line.getEndCoordinates());
+        int x = -21;
+        int y = -3;
+        line.setEndCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, line.getEndCoordinates());
+    }
+
 
     @Test
     public void testLineColour() {
@@ -49,6 +72,14 @@ public class LineModelTest {
         int size = 3;
         line.setStrokeSize(size);
         assertEquals(size, line.getStrokeSize());
+    }
+
+    /** Test setting the stroke size incorrectly. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStrokeSizeNegative() {
+        assertEquals(0, line.getStrokeSize());
+        int size = -1;
+        line.setStrokeSize(size);
     }
 
     @Test
@@ -86,6 +117,27 @@ public class LineModelTest {
         // Position should have moved
         assertArrayEquals(new int[]{25, 35}, line.getStartCoordinates());
         assertArrayEquals(new int[]{35, 45}, line.getEndCoordinates());
+    }
+
+    /** Test that negative elements can't be set as move start */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveStartIncorrectly() {
+        int startX = -5;
+        int startY = -5;
+
+        // Set the coordinates in the class
+        line.setMoveStart(startX, startY);
+
+    }
+
+    /** Test that negative elements can't be set as move end */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveEndIncorrectly() {
+        int endX = -30;
+        int endY = -40;
+
+        // Set the coordinates in the class
+        line.setMoveEnd(endX, endY);
     }
 
     @Test

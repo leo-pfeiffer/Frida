@@ -20,6 +20,7 @@ public class StarModelTest {
         this.star = new StarModel();
     }
 
+    /** Test setting the start coordinates works. */
     @Test
     public void testStartCoordinates() {
         assertArrayEquals(new int[]{0, 0}, star.getStartCoordinates());
@@ -29,6 +30,7 @@ public class StarModelTest {
         assertArrayEquals(new int[]{x, y}, star.getStartCoordinates());
     }
 
+    /** Test setting the end coordinates works. */
     @Test
     public void testEndCoordinates() {
         assertArrayEquals(new int[]{0, 0}, star.getEndCoordinates());
@@ -37,6 +39,27 @@ public class StarModelTest {
         star.setEndCoordinates(x, y);
         assertArrayEquals(new int[]{x, y}, star.getEndCoordinates());
     }
+
+    /** Test setting the start coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStartCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, star.getStartCoordinates());
+        int x = -42;
+        int y = -7;
+        star.setStartCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, star.getStartCoordinates());
+    }
+
+    /** Test setting the end coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testEndCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, star.getEndCoordinates());
+        int x = -21;
+        int y = -3;
+        star.setEndCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, star.getEndCoordinates());
+    }
+
 
     @Test
     public void testLineColour() {
@@ -60,6 +83,14 @@ public class StarModelTest {
         int size = 3;
         star.setStrokeSize(size);
         assertEquals(size, star.getStrokeSize());
+    }
+
+    /** Test setting the stroke size incorrectly. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStrokeSizeNegative() {
+        assertEquals(0, star.getStrokeSize());
+        int size = -1;
+        star.setStrokeSize(size);
     }
 
     @Test
@@ -97,6 +128,27 @@ public class StarModelTest {
         // Position should have moved
         assertArrayEquals(new int[]{25, 35}, star.getStartCoordinates());
         assertArrayEquals(new int[]{35, 45}, star.getEndCoordinates());
+    }
+
+    /** Test that negative elements can't be set as move start */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveStartIncorrectly() {
+        int startX = -5;
+        int startY = -5;
+
+        // Set the coordinates in the class
+        star.setMoveStart(startX, startY);
+
+    }
+
+    /** Test that negative elements can't be set as move end */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveEndIncorrectly() {
+        int endX = -30;
+        int endY = -40;
+
+        // Set the coordinates in the class
+        star.setMoveEnd(endX, endY);
     }
 
     @Test

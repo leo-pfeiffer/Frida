@@ -21,6 +21,7 @@ public class RectangleModelTest {
         this.rectangle = new RectangleModel();
     }
 
+    /** Test setting the start coordinates works. */
     @Test
     public void testStartCoordinates() {
         assertArrayEquals(new int[]{0, 0}, rectangle.getStartCoordinates());
@@ -30,6 +31,7 @@ public class RectangleModelTest {
         assertArrayEquals(new int[]{x, y}, rectangle.getStartCoordinates());
     }
 
+    /** Test setting the end coordinates works. */
     @Test
     public void testEndCoordinates() {
         assertArrayEquals(new int[]{0, 0}, rectangle.getEndCoordinates());
@@ -38,6 +40,27 @@ public class RectangleModelTest {
         rectangle.setEndCoordinates(x, y);
         assertArrayEquals(new int[]{x, y}, rectangle.getEndCoordinates());
     }
+
+    /** Test setting the start coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStartCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, rectangle.getStartCoordinates());
+        int x = -42;
+        int y = -7;
+        rectangle.setStartCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, rectangle.getStartCoordinates());
+    }
+
+    /** Test setting the end coordinates incorrectly throws exception. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testEndCoordinatesIncorrectly() {
+        assertArrayEquals(new int[]{0, 0}, rectangle.getEndCoordinates());
+        int x = -21;
+        int y = -3;
+        rectangle.setEndCoordinates(x, y);
+        assertArrayEquals(new int[]{x, y}, rectangle.getEndCoordinates());
+    }
+
 
     @Test
     public void testLineColour() {
@@ -61,6 +84,14 @@ public class RectangleModelTest {
         int size = 3;
         rectangle.setStrokeSize(size);
         assertEquals(size, rectangle.getStrokeSize());
+    }
+
+    /** Test setting the stroke size incorrectly. */
+    @Test(expected = IllegalArgumentException.class)
+    public void testStrokeSizeNegative() {
+        assertEquals(0, rectangle.getStrokeSize());
+        int size = -1;
+        rectangle.setStrokeSize(size);
     }
 
     @Test
@@ -98,6 +129,27 @@ public class RectangleModelTest {
         // Position should have moved
         assertArrayEquals(new int[]{25, 35}, rectangle.getStartCoordinates());
         assertArrayEquals(new int[]{35, 45}, rectangle.getEndCoordinates());
+    }
+
+    /** Test that negative elements can't be set as move start */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveStartIncorrectly() {
+        int startX = -5;
+        int startY = -5;
+
+        // Set the coordinates in the class
+        rectangle.setMoveStart(startX, startY);
+
+    }
+
+    /** Test that negative elements can't be set as move end */
+    @Test(expected = IllegalArgumentException.class)
+    public void testSetMoveEndIncorrectly() {
+        int endX = -30;
+        int endY = -40;
+
+        // Set the coordinates in the class
+        rectangle.setMoveEnd(endX, endY);
     }
 
     @Test
