@@ -1,5 +1,5 @@
 
-# CS5001 - Practical 4: Vector Drawing  
+# Vector Drawing  
   
 ## Table of Contents  
 + [Summary](#summary)  
